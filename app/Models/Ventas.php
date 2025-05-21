@@ -1,7 +1,6 @@
 <?php
-
+// app/Models/Venta.php
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Model;
 
 class Venta extends Model
@@ -9,6 +8,7 @@ class Venta extends Model
     protected $table = 'ventas';
     protected $primaryKey = 'PK_Id_Venta';
     public $timestamps = false;
+    protected $fillable = ['Fecha', 'Total', 'FK_Id_Cliente'];
 
     public function cliente()
     {
@@ -20,3 +20,4 @@ class Venta extends Model
         return $this->hasMany(DetalleVenta::class, 'FK_Id_Venta', 'PK_Id_Venta');
     }
 }
+
