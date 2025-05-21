@@ -1,0 +1,206 @@
+/* Paleta de colores morados */
+:root {
+  --color-principal: #6a4fbc;
+  --color-principal-oscuro: #5a3f9c;
+  --color-secundario: #b497e7;
+  --color-fondo: #f9f7ff;
+  --color-texto: #2c2c2c;
+  --color-texto-claro: #555;
+}
+
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  overflow-x: hidden;
+}
+
+/* Contenedor principal para usar toda la pantalla */
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Animación de entrada con barrido */
+@keyframes slideFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: slideFadeIn 0.6s ease forwards;
+}
+
+/* Menú superior */
+nav.navbar {
+  background-color: var(--color-principal);
+  padding: 0.75rem 2rem;
+  box-shadow: 0 2px 5px rgba(106, 79, 188, 0.3);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+  position: sticky;
+  top: 0;
+  z-index: 1100;
+}
+
+nav.navbar .nav-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+nav.navbar .nav-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+nav.navbar .nav-links a:hover {
+  background-color: var(--color-principal-oscuro);
+  cursor: pointer;
+}
+
+/* Contenido principal */
+main.content {
+  flex-grow: 1;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+/* Contenedor para el logo centrado arriba */
+.logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.logo-container img {
+  max-width: 200px;
+  height: auto;
+  user-select: none;
+}
+
+/* Botones grandes en centro de home */
+.center-buttons {
+  display: flex;
+  gap: 3rem;
+  justify-content: center;
+  align-items: center;
+  /* Mantiene fila horizontal */
+}
+
+.center-buttons .btn-large-group {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+
+.center-buttons .btn-large {
+  background-color: var(--color-principal);
+  color: white;
+  font-size: 1.8rem;
+  font-weight: 700;
+  padding: 1.2rem 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(106, 79, 188, 0.5);
+  transition: background-color 0.3s ease, transform 0.15s ease;
+  user-select: none;
+  border: none;
+  outline: none;
+}
+
+.center-buttons .btn-large:hover {
+  background-color: var(--color-principal-oscuro);
+  transform: scale(1.05);
+}
+
+/* Tooltip texto que aparece debajo */
+.center-buttons .tooltip-below {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--color-principal);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  user-select: none;
+  z-index: 100;
+}
+
+.center-buttons .btn-large-group:hover .tooltip-below {
+  opacity: 1;
+}
+
+/* Botones fijos en la esquina inferior izquierda */
+.fixed-bottom-buttons {
+  position: fixed;
+  bottom: 15px;
+  left: 15px;
+  display: flex;
+  gap: 10px;
+  z-index: 1000;
+}
+
+.fixed-bottom-buttons a.btn-info-fixed {
+  background-color: var(--color-principal);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(100, 30, 150, 0.4);
+  transition: background-color 0.3s ease, transform 0.15s ease;
+  user-select: none;
+  width: 150px;
+  text-align: center;
+}
+
+.fixed-bottom-buttons a.btn-info-fixed:hover {
+  background-color: #a162f7;
+  transform: scale(1.05);
+}
+
+/* Footer estilo */
+footer.footer {
+  background-color: var(--color-principal);
+  color: white;
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 0.9rem;
+  user-select: none;
+  box-shadow: 0 -2px 5px rgba(106, 79, 188, 0.3);
+}
