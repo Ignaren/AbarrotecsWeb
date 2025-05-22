@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CatalogosController;
+use App\Http\Controllers\VentasController;
 
 // Ruta de inicio home (NO TOCAR!!!)
 Route::get('/', [CatalogosController::class, 'home'])->name('inicio');
@@ -36,5 +37,10 @@ Route::post('/catalogos/productos/agregar', [CatalogosController::class, 'produc
 //proveedores
 Route::get('/catalogos/proveedores/agregar', [CatalogosController::class, 'proveedoresAgregarGet']);
 Route::post('/catalogos/proveedores/agregar', [CatalogosController::class, 'proveedoresAgregarPost']);
+
+//ventas
+Route::get('/ventas/crear', [VentasController::class, 'create'])->name('ventas.create');
+Route::post('/ventas/guardar', [VentasController::class, 'store'])->name('ventas.store');
+
 
 
