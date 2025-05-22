@@ -176,10 +176,16 @@
           <td>{{ $proveedor->Nombre }}</td>
           <td>{{ $proveedor->Telefono }}</td>
           <td>{{ $proveedor->Direccion }}</td>
-          <td>----</td>
+          <td>{{ ucfirst($proveedor->Estado ?? 'activo') }}</td>
+
           <td class="actions">
             <a href="{{ url('/catalogos/proveedores/editar/' . $proveedor->PK_Id_Proveedor) }}" title="Editar">✏️</a>
-            <a href="{{ url('/catalogos/proveedores/eliminar/' . $proveedor->PK_Id_Proveedor) }}" title="Eliminar" onclick="return confirm('¿Seguro que quieres eliminar este proveedor?');">🗑️</a>
+            <form action="{{ route('proveedores.eliminar', $proveedor->PK_Id_Proveedor) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Seguro que quieres eliminar este proveedor?');">
+    @csrf
+    @method('DELETE')
+    <button type="submit" title="Eliminar" style="border: none; background: none; padding: 0; margin: 0; font-size: 1.2rem; cursor: pointer;">🗑️</button>
+</form>
+
           </td>
         </tr>
         @empty

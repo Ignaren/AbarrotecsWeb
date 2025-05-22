@@ -5,15 +5,19 @@ use Illuminate\Http\Request;
 use App\Models\Venta;
 use App\Models\DetalleVenta;
 use App\Models\Producto;
-use App\Models\Cliente;
+use App\Models\Cliente; // Modelo Cliente apuntando a tabla 'cliente'
 use Illuminate\Support\Facades\DB;
 
 class VentasController extends Controller
 {
     public function create()
     {
-        $productos = Producto::all();
-        $clientes = Cliente::all();
+        // Traemos solo productos activos
+        $productos = Producto::where('estado', 'Activo')->get();
+
+        // Traemos solo clientes activos (tabla 'cliente' desde el modelo)
+        $clientes = Cliente::where('estado', 'Activo')->get();
+
         return view('ventas.create', compact('productos', 'clientes'));
     }
 
@@ -22,7 +26,6 @@ class VentasController extends Controller
         DB::beginTransaction();
 
         try {
-            // Validación
             $request->validate([
                 'Fecha' => 'required|date',
                 'FK_Id_Cliente' => 'required|integer',
@@ -40,7 +43,9 @@ class VentasController extends Controller
             $totalVenta = 0;
 
             foreach ($request->productos as $item) {
-                $producto = Producto::findOrFail($item['FK_Id_Producto']);
+                $producto = Producto::where('PK_Id_Producto', $item['FK_Id_Producto'])
+                                    ->where('estado', 'Activo')
+                                    ->firstOrFail();
 
                 if ($producto->Existencia < $item['Cantidad']) {
                     throw new \Exception("Stock insuficiente para el producto: {$producto->Nombre}");

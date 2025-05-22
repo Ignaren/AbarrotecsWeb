@@ -209,7 +209,12 @@
                  Reabastecer
               </a>
               <a href="{{ url('/catalogos/productos/editar/'.$producto->PK_Id_Producto) }}" class="btn-editar" title="Editar">✏️</a>
-              <a href="{{ url('/catalogos/productos/eliminar/'.$producto->PK_Id_Producto) }}" class="btn-eliminar" title="Eliminar">🗑️</a>
+              <form action="{{ url('/catalogos/productos/eliminar/'.$producto->PK_Id_Producto) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este producto?');">
+  @csrf
+  @method('DELETE')
+  <button type="submit" class="btn-eliminar" title="Eliminar">🗑️</button>
+</form>
+
             </div>
           </td>
         </tr>

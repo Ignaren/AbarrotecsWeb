@@ -179,7 +179,8 @@
           <td>{{ $cliente->RFC }}</td>
           <td>{{ $cliente->Telefono }}</td>
           <td>{{ $cliente->Direccion }}</td>
-          <td>----</td>
+          <td>{{ $cliente->Estado }}</td>
+
           <td class="actions">
             <a href="{{ url('/catalogos/clientes/editar/' . $cliente->PK_Id_Cliente) }}" title="Editar">✏️</a>
             <a href="{{ url('/catalogos/clientes/eliminar/' . $cliente->PK_Id_Cliente) }}" title="Eliminar" onclick="return confirm('¿Seguro que quieres eliminar este cliente?');">🗑️</a>

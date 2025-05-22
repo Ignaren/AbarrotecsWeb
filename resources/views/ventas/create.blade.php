@@ -2,16 +2,25 @@
 
 @section('content')
 <div class="container">
+    {{-- Breadcrumbs --}}
+    <nav aria-label="breadcrumb" class="mt-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url('/') }}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{{ url('/catalogos/ventas') }}">Ventas</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Registrar Venta</li>
+        </ol>
+    </nav>
+
     <h2>Registrar Venta</h2>
 
     @if ($errors->any())
-        <div class="alert alert-danger">
+        <div class="alert alert-danger" style="font-weight: bold; color: #b00020; background-color: #fddede; padding: 10px; border-radius: 5px;">
             <strong>¡Error!</strong> {{ $errors->first() }}
         </div>
     @endif
 
     @if (session('success'))
-        <div class="alert alert-success">
+        <div class="alert alert-success" style="font-weight: bold; color: #1e4620; background-color: #d4edda; padding: 10px; border-radius: 5px;">
             {{ session('success') }}
         </div>
     @endif
@@ -60,7 +69,10 @@
             <input type="text" id="total" class="form-control" readonly>
         </div>
 
-        <button type="submit" class="btn btn-primary">Guardar Venta</button>
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Guardar Venta</button>
+            <a href="{{ url('/catalogos/ventas') }}" class="btn btn-danger">Cancelar</a>
+        </div>
     </form>
 </div>
 
@@ -127,7 +139,6 @@
         actualizarTotal();
     }
 
-    // Para iniciar con una fila vacía
     window.onload = function () {
         agregarProducto();
     }
