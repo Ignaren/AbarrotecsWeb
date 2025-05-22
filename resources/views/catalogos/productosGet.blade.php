@@ -9,7 +9,6 @@
     margin: 0 auto;
   }
 
-  /* Tabla responsiva */
   .table-wrapper {
     overflow-x: auto;
     border-radius: 12px;
@@ -25,7 +24,7 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 1rem;
     color: #333;
-    min-width: 750px; /* un poco más para la columna editar */
+    min-width: 850px;
   }
 
   thead tr {
@@ -45,6 +44,7 @@
   thead th:first-child {
     border-radius: 12px 0 0 12px;
   }
+
   thead th:last-child {
     border-radius: 0 12px 12px 0;
   }
@@ -55,6 +55,7 @@
     transition: background-color 0.3s ease, transform 0.2s ease;
     cursor: default;
   }
+
   tbody tr:hover {
     background-color: #e5defb;
     transform: translateY(-3px);
@@ -78,14 +79,12 @@
     color: #4B367C;
   }
 
-  /* Texto para “sin categoría” en itálica y gris claro */
   tbody td:nth-child(7):empty::before {
     content: "Sin categoría";
     font-style: italic;
     color: #aaa;
   }
 
-  /* Botón editar dentro de tabla */
   .btn-editar {
     background-color: #6A4FBC;
     color: white;
@@ -98,14 +97,32 @@
     transition: background-color 0.3s ease;
     display: inline-block;
   }
+
   .btn-editar:hover {
     background-color: #4B367C;
   }
 
-  /* Scroll horizontal con sombra para indicar contenido oculto */
+  .btn-eliminar {
+    background-color: #dc3545;
+    color: white;
+    font-weight: 700;
+    padding: 0.35rem 0.75rem;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(220, 53, 69, 0.6);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: background-color 0.3s ease;
+    display: inline-block;
+  }
+
+  .btn-eliminar:hover {
+    background-color: #b02a37;
+  }
+
   .table-wrapper::-webkit-scrollbar {
     height: 8px;
   }
+
   .table-wrapper::-webkit-scrollbar-thumb {
     background: #6A4FBC;
     border-radius: 10px;
@@ -135,7 +152,7 @@
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
     <h1 style="color: #4B367C; font-weight: 700; margin: 0;">Productos</h1>
 
-    <a href="#" class="btn-agregar" style="
+    <a href="/catalogos/productos/agregar" class="btn-agregar" style="
       background-color: #6A4FBC;
       color: white;
       font-weight: 700;
@@ -149,7 +166,7 @@
     "
     onmouseover="this.style.backgroundColor='#4B367C'"
     onmouseout="this.style.backgroundColor='#6A4FBC'">
-      + Agregar Producto
+      + Agregar
     </a>
   </div>
 
@@ -170,6 +187,8 @@
           <th>Caducidad</th>
           <th>Precio</th>
           <th>Categoría</th>
+          <th>Estado</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -179,13 +198,18 @@
           <td>{{ $producto->Nombre }}</td>
           <td>{{ $producto->Descripcion }}</td>
           <td>{{ $producto->Existencia }}</td>
-          <td>{{ \Carbon\Carbon::parse($producto->Fecha_Caducidad)->format('d/m/Y') }}</td>
+          <td>{{ $producto->Fecha_Caducidad ? \Carbon\Carbon::parse($producto->Fecha_Caducidad)->format('d/m/Y') : '---' }}</td>
           <td class="precio">${{ number_format($producto->Precio, 2) }}</td>
           <td>{{ $producto->categoria->Nombre ?? '' }}</td>
+          <td>----</td>
+          <td>
+            <a href="#" class="btn-editar" title="Editar" style="margin-right: 0.5rem;">✏️</a>
+            <a href="#" class="btn-eliminar" title="Eliminar">🗑️</a>
+          </td>
         </tr>
         @empty
         <tr>
-          <td colspan="8" style="text-align:center; padding: 20px 30px;">No hay productos registrados.</td>
+          <td colspan="9" style="text-align:center; padding: 20px 30px;">No hay productos registrados.</td>
         </tr>
         @endforelse
       </tbody>

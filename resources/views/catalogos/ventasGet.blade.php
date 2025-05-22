@@ -134,7 +134,7 @@
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
     <h1 style="color: #4B367C; font-weight: 700; margin: 0;">Ventas</h1>
 
-    <a class="btn-agregar" href="#">+ Agregar Venta</a>
+    <a class="btn-agregar" href="#">+ Agregar</a>
 
   </div>
 

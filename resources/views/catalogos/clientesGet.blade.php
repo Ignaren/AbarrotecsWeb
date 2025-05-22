@@ -97,6 +97,28 @@
       background: #6A4FBC;
       border-radius: 10px;
     }
+
+    /* Estilo para los links de acciones (los emojis) */
+    .actions {
+      white-space: nowrap;
+      font-size: 1.2rem;
+    }
+
+    .actions a {
+      text-decoration: none;
+      margin-right: 12px;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+      display: inline-block;
+    }
+
+    .actions a:last-child {
+      margin-right: 0;
+    }
+
+    .actions a:hover {
+      transform: scale(1.3);
+    }
   </style>
 @endsection
 
@@ -121,9 +143,11 @@
 
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
     <h1 style="color: #4B367C; font-weight: 700; margin: 0;">Clientes</h1>
-
-    <a class="btn-agregar" href="#">+ Agregar Cliente</a>
-
+    <a href="{{ url('/catalogos/clientes/agregar') }}" class="btn-agregar"
+      onmouseover="this.style.backgroundColor='#4B367C'"
+      onmouseout="this.style.backgroundColor='#6A4FBC'">
+      + Agregar
+    </a>
   </div>
 
   @if(session('success'))
@@ -142,6 +166,8 @@
           <th>RFC</th>
           <th>Teléfono</th>
           <th>Dirección</th>
+          <th>Estado</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -153,10 +179,15 @@
           <td>{{ $cliente->RFC }}</td>
           <td>{{ $cliente->Telefono }}</td>
           <td>{{ $cliente->Direccion }}</td>
+          <td>----</td>
+          <td class="actions">
+            <a href="{{ url('/catalogos/clientes/editar/' . $cliente->PK_Id_Cliente) }}" title="Editar">✏️</a>
+            <a href="{{ url('/catalogos/clientes/eliminar/' . $cliente->PK_Id_Cliente) }}" title="Eliminar" onclick="return confirm('¿Seguro que quieres eliminar este cliente?');">🗑️</a>
+          </td>
         </tr>
         @empty
         <tr>
-          <td colspan="6" style="text-align:center; padding: 20px 30px;">No hay clientes registrados.</td>
+          <td colspan="8" style="text-align:center; padding: 20px 30px;">No hay clientes registrados.</td>
         </tr>
         @endforelse
       </tbody>

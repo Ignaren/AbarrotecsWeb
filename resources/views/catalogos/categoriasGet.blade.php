@@ -12,12 +12,51 @@
   table {
     width: 100% !important; /* Que ocupe todo el ancho del contenedor */
     min-width: unset;       /* No limitar ancho mínimo */
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    font-family: Arial, sans-serif;
+    font-size: 1rem;
+    color: #333;
   }
 
-  /* Más espacio en celdas */
-  table th,
-  table td {
+  th, td {
     padding: 20px 30px !important;
+  }
+
+  thead tr {
+    background-color: #6A4FBC;
+    color: white;
+    text-align: left;
+  }
+
+  thead th:first-child {
+    border-radius: 8px 0 0 8px;
+  }
+  thead th:last-child {
+    border-radius: 0 8px 8px 0;
+  }
+
+  tbody tr {
+    background: white;
+    box-shadow: 0 2px 5px rgba(106, 79, 188, 0.1);
+  }
+
+  /* Espacio entre emojis de acciones */
+  .acciones {
+    display: flex;
+    gap: 1rem; /* espacio entre emojis */
+  }
+
+  /* Cursor pointer en emojis */
+  .acciones span {
+    cursor: pointer;
+    font-size: 1.2rem;
+    user-select: none;
+  }
+
+  /* Opcional: cambio de color al pasar el mouse */
+  .acciones span:hover {
+    color: #6A4FBC;
   }
 </style>
 @endsection
@@ -44,7 +83,7 @@
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
     <h1 style="color: #4B367C; font-weight: 700; margin: 0;">Categorías</h1>
 
-    <a href="#" class="btn-agregar" style="
+    <a href="{{ url('/catalogos/categorias/agregar') }}" class="btn-agregar" style="
       background-color: #6A4FBC;
       color: white;
       font-weight: 700;
@@ -58,7 +97,7 @@
     "
     onmouseover="this.style.backgroundColor='#4B367C'"
     onmouseout="this.style.backgroundColor='#6A4FBC'">
-      + Agregar Categoría
+      + Agregar
     </a>
   </div>
 
@@ -69,24 +108,35 @@
   @endif
 
   <div style="overflow-x: auto;">
-    <table style="border-collapse: separate; border-spacing: 0 10px; font-family: Arial, sans-serif; font-size: 1rem; color: #333;">
+    <table>
       <thead>
-        <tr style="background-color: #6A4FBC; color: white; text-align: left;">
-          <th style="padding: 20px 30px; border-radius: 8px 0 0 8px;">ID</th>
-          <th style="padding: 20px 30px;">Nombre</th>
-          <th style="padding: 20px 30px; border-radius: 0 8px 8px 0;">Descripción</th>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Estado</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
         @forelse ($categorias as $categoria)
-        <tr style="background: white; box-shadow: 0 2px 5px rgba(106, 79, 188, 0.1);">
-          <td style="padding: 20px 30px;">{{ $categoria->PK_Id_Categoria }}</td>
-          <td style="padding: 20px 30px;">{{ $categoria->Nombre }}</td>
-          <td style="padding: 20px 30px;">{{ $categoria->Descripcion }}</td>
+        <tr>
+          <td>{{ $categoria->PK_Id_Categoria }}</td>
+          <td>{{ $categoria->Nombre }}</td>
+          <td>{{ $categoria->Descripcion }}</td>
+          <td>----</td>
+          <td class="acciones">
+            <a href="{{ url('/catalogos/categorias/editar/'.$categoria->PK_Id_Categoria) }}" title="Editar">
+              <span>✏️</span>
+            </a>
+            <a href="{{ url('/catalogos/categorias/eliminar/'.$categoria->PK_Id_Categoria) }}" title="Eliminar">
+              <span>🗑️</span>
+            </a>
+          </td>
         </tr>
         @empty
         <tr>
-          <td colspan="3" style="text-align:center; padding: 20px 30px;">No hay categorías registradas.</td>
+          <td colspan="5" style="text-align:center; padding: 20px 30px;">No hay categorías registradas.</td>
         </tr>
         @endforelse
       </tbody>

@@ -84,8 +84,8 @@ nav.navbar .nav-links a:hover {
 /* Contenido principal */
 main.content {
   flex-grow: 1;
-  padding: 3rem 4rem; /* Más espacio a los lados y arriba/abajo */
-  max-width: 1100px;  /* Más ancho para aprovechar espacio */
+  padding: 3rem 4rem;
+  max-width: 1100px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -99,7 +99,7 @@ main.content {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
-  flex-wrap: wrap; /* Que se adapte en pantallas pequeñas */
+  flex-wrap: wrap;
 }
 
 /* Título de categorías */
@@ -110,11 +110,11 @@ main.content {
   margin: 0;
 }
 
-/* Botón Agregar Categoría modificado para ser más pequeño y elegante */
+/* Botón Agregar Categoría */
 .btn-agregar-categoria {
   background: linear-gradient(45deg, #7a5fff, #9e77ff);
   color: white;
-  padding: 0.5rem 1.3rem; /* Más pequeño */
+  padding: 0.5rem 1.3rem;
   border: none;
   border-radius: 30px;
   font-weight: 700;
@@ -141,7 +141,7 @@ main.content {
   box-shadow: 0 4px 12px rgba(102, 77, 219, 0.4);
 }
 
-/* Botón Editar tabla: mismo estilo que agregar pero deshabilitado */
+/* Botón Editar tabla (deshabilitado) */
 .btn-editar-tabla {
   background: linear-gradient(45deg, #7a5fff, #9e77ff);
   color: white;
@@ -335,65 +335,243 @@ table {
   border-spacing: 0 10px; /* Espacio entre filas */
   font-size: 1rem;
   color: var(--color-texto);
-  background-color: transparent;
-  user-select: none;
-  display: block;
-  overflow-x: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-principal) var(--color-fondo);
 }
 
 thead tr {
   background-color: var(--color-principal);
   color: white;
   font-weight: 700;
-  border-radius: 12px;
+  border-radius: 12px 12px 0 0;
 }
 
 thead th {
-  padding: 12px 20px;
+  padding: 12px 16px;
   text-align: left;
   user-select: none;
 }
 
 tbody tr {
   background-color: white;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+  transition: background-color 0.3s ease;
   border-radius: 12px;
-  box-shadow: 0 1px 6px rgba(106, 79, 188, 0.12);
-  transition: box-shadow 0.3s ease;
-  cursor: default;
 }
 
 tbody tr:hover {
-  box-shadow: 0 5px 15px rgba(106, 79, 188, 0.25);
+  background-color: var(--color-secundario);
+  color: var(--color-principal);
 }
 
 tbody td {
-  padding: 14px 20px;
-  border-top: none;
+  padding: 12px 16px;
   vertical-align: middle;
 }
 
-/* Responsive ajustes */
-@media (max-width: 768px) {
-  main.content {
-    padding: 2rem 1.5rem;
-  }
-  
-  .header-categorias {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: flex-start;
-  }
+/* Inputs y textarea */
+input[type="text"],
+textarea {
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 1rem;
+  border: 1.8px solid var(--color-principal);
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 0.3s ease;
+  font-family: inherit;
+  color: var(--color-texto);
+  resize: vertical;
+}
 
-  .center-buttons {
-    flex-direction: column;
-    gap: 2rem;
-  }
+input[type="text"]:focus,
+textarea:focus {
+  border-color: var(--color-principal-oscuro);
+  box-shadow: 0 0 8px rgba(106, 79, 188, 0.3);
+}
 
-  .btn-agregar-categoria,
-  .btn-editar-tabla {
-    width: 100%;
-    text-align: center;
-  }
+/* Select */
+select {
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 1rem;
+  border: 1.8px solid var(--color-principal);
+  border-radius: 10px;
+  background-color: white;
+  color: var(--color-texto);
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+  outline: none;
+  font-family: inherit;
+}
+
+select:focus {
+  border-color: var(--color-principal-oscuro);
+  box-shadow: 0 0 8px rgba(106, 79, 188, 0.3);
+}
+
+/* Formularios generales */
+form {
+  margin-top: 1.5rem;
+  max-width: 500px;
+  width: 100%;
+}
+
+/* Labels */
+label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: block;
+  color: var(--color-principal);
+  user-select: none;
+}
+
+/* Mensajes de error */
+.error-message {
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin-top: 0.3rem;
+  user-select: none;
+}
+
+/* Botón general */
+.btn {
+  background-color: var(--color-principal);
+  border: none;
+  color: white;
+  padding: 0.6rem 1.5rem;
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  user-select: none;
+  display: inline-block;
+}
+
+.btn:hover {
+  background-color: var(--color-principal-oscuro);
+}
+
+.capture-view button[type="submit"] {
+  background: linear-gradient(45deg, #7a5fff, #9e77ff);
+  color: white;
+  padding: 0.75rem 2rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(122, 95, 255, 0.6);
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
+  user-select: none;
+  align-self: flex-start;
+}
+
+.capture-view button[type="submit"]:hover {
+  background: linear-gradient(45deg, #664ddb, #7f5fe6);
+  box-shadow: 0 10px 30px rgba(102, 77, 219, 0.8);
+  transform: translateY(-2px);
+}
+
+.capture-view button[type="submit"]:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(102, 77, 219, 0.4);
+}
+button[type="submit"] {
+  background-color: #6A4FBC;
+  color: white;
+  font-weight: 700;
+  padding: 0.5rem 1.5rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  box-shadow: 0 3px 8px rgba(106, 79, 188, 0.6);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+button[type="submit"]:hover {
+  background-color: #4B367C;
+  box-shadow: 0 6px 12px rgba(75, 55, 124, 0.8);
+}
+form input[type="text"],
+form input[type="email"],
+form input[type="number"],
+form input[type="date"],
+form select,
+form textarea {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1.8px solid #6A4FBC; /* color morado */
+  border-radius: 10px;
+  font-size: 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-sizing: border-box;
+}
+
+form input[type="text"]:focus,
+form input[type="email"]:focus,
+form input[type="number"]:focus,
+form input[type="date"]:focus,
+form select:focus,
+form textarea:focus {
+  outline: none;
+  border-color: #4B367C; /* morado oscuro */
+  box-shadow: 0 0 8px rgba(75, 55, 124, 0.5);
+}
+
+form label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  color: #4B367C;
+  font-size: 1rem;
+}
+.btn-guardar {
+  background: linear-gradient(45deg, #7a5fff, #9e77ff);
+  color: white;
+  font-weight: 700;
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(122, 95, 255, 0.6);
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
+  user-select: none;
+  margin-top: 1.8rem; /* separación del formulario */
+  align-self: flex-start; /* para que no se estire */
+  font-size: 1.1rem;
+  display: inline-block;
+}
+
+.btn-guardar:hover {
+  background: linear-gradient(45deg, #664ddb, #7f5fe6);
+  box-shadow: 0 10px 30px rgba(102, 77, 219, 0.8);
+  transform: translateY(-2px);
+}
+
+.btn-guardar:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(102, 77, 219, 0.4);
+}
+.btn-agregar {
+  background-color: #6A4FBC;
+  color: white;
+  font-weight: 700;
+  padding: 0.5rem 1.5rem; /* Más ancho para ovalado */
+  border-radius: 30px; /* Bordes muy redondeados para ovalado */
+  box-shadow: 0 4px 12px rgba(106, 79, 188, 0.6);
+  text-decoration: none;
+  font-size: 1rem; /* un poco más grande */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  white-space: nowrap;
+  display: inline-block;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-agregar:hover {
+  background-color: #4B367C;
+  box-shadow: 0 6px 18px rgba(75, 54, 124, 0.8);
 }

@@ -22,4 +22,19 @@ Route::get('/catalogos/clientes', [CatalogosController::class, 'clientesGet']);
 Route::get('/catalogos/ventas', [CatalogosController::class, 'ventasGet']);
 Route::get('/catalogos/ventas/detalle/{id}', [CatalogosController::class, 'detalleVenta']);
 
+//formularios (captura de datos)
+// Mostrar el formulario
+//categoria
+Route::get('/catalogos/categorias/agregar', [CatalogosController::class, 'categoriasAgregarGet']);
+Route::post('/catalogos/categorias/agregar', [CatalogosController::class, 'categoriasAgregarPost']);
+//clientes
+Route::get('/catalogos/clientes/agregar', [CatalogosController::class, 'clientesAgregarGet']);
+Route::post('/catalogos/clientes/agregar', [CatalogosController::class, 'clientesAgregarPost']);
+//productos
+Route::get('/catalogos/productos/agregar', [CatalogosController::class, 'productosAgregarGet']);
+Route::post('/catalogos/productos/agregar', [CatalogosController::class, 'productosAgregarPost']);
+//proveedores
+Route::get('/catalogos/proveedores/agregar', [CatalogosController::class, 'proveedoresAgregarGet']);
+Route::post('/catalogos/proveedores/agregar', [CatalogosController::class, 'proveedoresAgregarPost']);
+
 
