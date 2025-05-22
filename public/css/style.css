@@ -84,11 +84,101 @@ nav.navbar .nav-links a:hover {
 /* Contenido principal */
 main.content {
   flex-grow: 1;
-  padding: 2rem;
+  padding: 3rem 4rem; /* Más espacio a los lados y arriba/abajo */
+  max-width: 1100px;  /* Más ancho para aprovechar espacio */
+  margin: 0 auto;
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+/* Contenedor header para título + botón a la derecha */
+.header-categorias {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap; /* Que se adapte en pantallas pequeñas */
+}
+
+/* Título de categorías */
+.header-categorias h1 {
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--color-principal);
+  margin: 0;
+}
+
+/* Botón Agregar Categoría modificado para ser más pequeño y elegante */
+.btn-agregar-categoria {
+  background: linear-gradient(45deg, #7a5fff, #9e77ff);
+  color: white;
+  padding: 0.5rem 1.3rem; /* Más pequeño */
+  border: none;
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(122, 95, 255, 0.5);
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
+  user-select: none;
+  display: inline-block;
+  margin-bottom: 0;
+  white-space: nowrap;
+  text-align: center;
+  text-decoration: none;
+}
+
+.btn-agregar-categoria:hover {
+  background: linear-gradient(45deg, #664ddb, #7f5fe6);
+  box-shadow: 0 8px 25px rgba(102, 77, 219, 0.7);
+  transform: translateY(-2px);
+}
+
+.btn-agregar-categoria:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(102, 77, 219, 0.4);
+}
+
+/* Botón Editar tabla: mismo estilo que agregar pero deshabilitado */
+.btn-editar-tabla {
+  background: linear-gradient(45deg, #7a5fff, #9e77ff);
+  color: white;
+  padding: 0.5rem 1.3rem;
+  border: none;
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: not-allowed;
+  box-shadow: 0 5px 15px rgba(122, 95, 255, 0.3);
+  user-select: none;
+  display: inline-block;
+  margin-bottom: 0;
+  white-space: nowrap;
+  text-align: center;
+  text-decoration: none;
+  opacity: 0.6;
+  pointer-events: none;
+  transition: none;
+}
+
+/* Botón Eliminar tabla */
+.btn-eliminar-tabla {
+  background-color: #e74c3c;
+  border: none;
+  color: white;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 0.95rem;
+  user-select: none;
+}
+
+.btn-eliminar-tabla:hover {
+  background-color: #c0392b;
 }
 
 /* Contenedor para el logo centrado arriba */
@@ -110,7 +200,6 @@ main.content {
   gap: 3rem;
   justify-content: center;
   align-items: center;
-  /* Mantiene fila horizontal */
 }
 
 .center-buttons .btn-large-group {
@@ -203,4 +292,108 @@ footer.footer {
   font-size: 0.9rem;
   user-select: none;
   box-shadow: 0 -2px 5px rgba(106, 79, 188, 0.3);
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 1rem;
+  color: var(--color-texto-claro);
+  margin-bottom: 1rem;
+  user-select: none;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.breadcrumb li {
+  list-style: none;
+}
+
+.breadcrumb a {
+  color: var(--color-principal);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb .separator {
+  color: var(--color-texto-claro);
+  user-select: none;
+  padding: 0 0.2rem;
+  font-weight: 600;
+}
+
+/* Mejora diseño tabla */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px; /* Espacio entre filas */
+  font-size: 1rem;
+  color: var(--color-texto);
+  background-color: transparent;
+  user-select: none;
+  display: block;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-principal) var(--color-fondo);
+}
+
+thead tr {
+  background-color: var(--color-principal);
+  color: white;
+  font-weight: 700;
+  border-radius: 12px;
+}
+
+thead th {
+  padding: 12px 20px;
+  text-align: left;
+  user-select: none;
+}
+
+tbody tr {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 6px rgba(106, 79, 188, 0.12);
+  transition: box-shadow 0.3s ease;
+  cursor: default;
+}
+
+tbody tr:hover {
+  box-shadow: 0 5px 15px rgba(106, 79, 188, 0.25);
+}
+
+tbody td {
+  padding: 14px 20px;
+  border-top: none;
+  vertical-align: middle;
+}
+
+/* Responsive ajustes */
+@media (max-width: 768px) {
+  main.content {
+    padding: 2rem 1.5rem;
+  }
+  
+  .header-categorias {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .center-buttons {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .btn-agregar-categoria,
+  .btn-editar-tabla {
+    width: 100%;
+    text-align: center;
+  }
 }

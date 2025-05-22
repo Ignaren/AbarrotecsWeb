@@ -6,6 +6,8 @@ use App\Models\Producto;
 use App\Models\Categoria;
 use App\Models\Proveedor;
 use App\Models\Cliente;
+use App\Models\Venta;
+use App\Models\DetalleVenta; // Importa el modelo DetalleVenta
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -142,12 +144,11 @@ class CatalogosController extends Controller
     {
         $clientes = Cliente::all();
 
-        return view('catalogos.clienteGet', [
+        return view('catalogos.clientesGet', [
             'clientes' => $clientes,
             'breadcrumbs' => [
                 'Inicio' => url('/'),
                 'Clientes' => url('/catalogos/clientes'),
-                'Listado' => url('/catalogos/clientes/listado')
             ]
         ]);
     }
@@ -177,4 +178,37 @@ class CatalogosController extends Controller
 
         return redirect('/catalogos/clientes')->with('success', 'Cliente agregado correctamente.');
     }
+
+    // VENTAS - listado de ventas
+    public function ventasGet(): View
+    {
+        $ventas = Venta::all();
+
+        return view('catalogos.ventasGet', [
+            'ventas' => $ventas,
+            'breadcrumbs' => [
+                'Inicio' => url('/'),
+                'Ventas' => url('/catalogos/ventas'),
+            ],
+        ]);
+    }
+
+    // DETALLE DE VENTA
+public function detalleVenta(int $id): View
+{
+    $detalles = DetalleVenta::with(['venta.cliente', 'producto'])
+        ->where('FK_Id_Venta', $id)
+        ->get();
+
+    return view('catalogos.detalleVenta', [
+        'detalles' => $detalles,
+        'idVenta' => $id,
+        'breadcrumbs' => [
+            'Inicio' => url('/'),
+            'Ventas' => url('/catalogos/ventas'),
+            'Detalle' => ''
+        ]
+    ]);
+}
+
 }

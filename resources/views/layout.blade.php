@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>@yield('title', 'Mi Aplicación')</title>
+  <title>@yield('title', 'AbarroTecs')</title>
   <link rel="stylesheet" href="{{ asset('css/style.css') }}" />
 </head>
 <body>
@@ -16,11 +16,11 @@
       </div>
       <div class="nav-links">
         <a href="{{ url('/') }}">Inicio</a>
-        <a href="{{ url('/categorias') }}">Categorías</a>
-        <a href="{{ url('/productos') }}">Productos</a>
-        <a href="{{ url('/proveedores') }}">Proveedores</a>
-        <a href="{{ url('/clientes') }}">Clientes</a>
-        <a href="{{ url('/ventas') }}">Ventas</a>
+        <a href="{{ url('/catalogos/categorias') }}">Categorías</a>
+        <a href="{{ url('/catalogos/productos') }}">Productos</a>
+        <a href="{{ url('/catalogos/proveedores') }}">Proveedores</a>
+        <a href="{{ url('/catalogos/clientes') }}">Clientes</a>
+        <a href="{{ url('/catalogos/ventas') }}">Ventas</a>
       </div>
     </nav>
 

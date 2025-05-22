@@ -14,5 +14,12 @@ Route::get('/sobre-nosotros', function () {
     return view('sobreNosotros');
 })->name('sobreNosotros');
 //-------------------------
+//vistas de catalogos
+Route::get('/catalogos/categorias', [CatalogosController::class, 'categoriasGet']);
+Route::get('/catalogos/productos', [CatalogosController::class, 'productosGet']);
+Route::get('/catalogos/proveedores', [CatalogosController::class, 'proveedoresGet']);
+Route::get('/catalogos/clientes', [CatalogosController::class, 'clientesGet']);
+Route::get('/catalogos/ventas', [CatalogosController::class, 'ventasGet']);
+Route::get('/catalogos/ventas/detalle/{id}', [CatalogosController::class, 'detalleVenta']);
 
 

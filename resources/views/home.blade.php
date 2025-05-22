@@ -13,35 +13,35 @@
 
   <div class="center-buttons">
     <div class="btn-large-group fade-in" style="margin-top: 40px;">
-      <a href="{{ url('/categorias') }}" class="btn-large">
+      <a href="{{ url('/catalogos/categorias') }}" class="btn-large">
         Categorías
         <div class="tooltip-below">Gestiona las categorías de productos</div>
       </a>
     </div>
 
     <div class="btn-large-group fade-in" style="margin-top: 40px;">
-      <a href="{{ url('/productos') }}" class="btn-large">
+      <a href="{{ url('/catalogos/productos') }}" class="btn-large">
         Productos
         <div class="tooltip-below">Administra los productos disponibles</div>
       </a>
     </div>
 
     <div class="btn-large-group fade-in" style="margin-top: 40px;">
-      <a href="{{ url('/proveedores') }}" class="btn-large">
+      <a href="{{ url('/catalogos/proveedores') }}" class="btn-large">
         Proveedores
         <div class="tooltip-below">Consulta y edita información de proveedores</div>
       </a>
     </div>
 
     <div class="btn-large-group fade-in" style="margin-top: 40px;">
-      <a href="{{ url('/clientes') }}" class="btn-large">
+      <a href="{{ url('/catalogos/clientes') }}" class="btn-large">
         Clientes
         <div class="tooltip-below">Visualiza y gestiona tus clientes</div>
       </a>
     </div>
 
     <div class="btn-large-group fade-in" style="margin-top: 40px;">
-      <a href="{{ url('/ventas') }}" class="btn-large">
+      <a href="{{ url('/catalogos/ventas') }}" class="btn-large">
         Ventas
         <div class="tooltip-below">Registra y consulta las ventas</div>
       </a>
