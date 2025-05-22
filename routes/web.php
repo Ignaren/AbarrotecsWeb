@@ -43,4 +43,12 @@ Route::get('/ventas/crear', [VentasController::class, 'create'])->name('ventas.c
 Route::post('/ventas/guardar', [VentasController::class, 'store'])->name('ventas.store');
 
 
+//editores
+Route::get('/catalogos/categorias/editar/{id}', [CatalogosController::class, 'editarCategoria'])->name('categorias.editar');
+Route::post('/catalogos/categorias/editar/{id}', [CatalogosController::class, 'actualizarCategoria'])->name('categorias.actualizar');
+
+
+//eliminadores
+Route::get('/catalogos/categorias/eliminar/{id}', [CatalogosController::class, 'eliminarCategoria'])->name('categorias.eliminar');
+
 

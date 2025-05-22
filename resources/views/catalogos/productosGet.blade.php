@@ -79,23 +79,20 @@
     color: #4B367C;
   }
 
-  tbody td:nth-child(7):empty::before {
-    content: "Sin categoría";
-    font-style: italic;
-    color: #aaa;
-  }
-
-  .btn-editar {
-    background-color: #6A4FBC;
-    color: white;
+  .btn-editar, .btn-eliminar, .btn-reabastecer {
     font-weight: 700;
     padding: 0.35rem 0.75rem;
     border-radius: 12px;
     box-shadow: 0 3px 8px rgba(106, 79, 188, 0.6);
     text-decoration: none;
     font-size: 0.85rem;
-    transition: background-color 0.3s ease;
     display: inline-block;
+    margin-right: 0.5rem;
+  }
+
+  .btn-editar {
+    background-color: #6A4FBC;
+    color: white;
   }
 
   .btn-editar:hover {
@@ -105,18 +102,21 @@
   .btn-eliminar {
     background-color: #dc3545;
     color: white;
-    font-weight: 700;
-    padding: 0.35rem 0.75rem;
-    border-radius: 12px;
     box-shadow: 0 3px 8px rgba(220, 53, 69, 0.6);
-    text-decoration: none;
-    font-size: 0.85rem;
-    transition: background-color 0.3s ease;
-    display: inline-block;
   }
 
   .btn-eliminar:hover {
     background-color: #b02a37;
+  }
+
+  .btn-reabastecer {
+    background-color: #28a745;
+    color: white;
+    box-shadow: 0 3px 8px rgba(40, 167, 69, 0.6);
+  }
+
+  .btn-reabastecer:hover {
+    background-color: #1e7e34;
   }
 
   .table-wrapper::-webkit-scrollbar {
@@ -200,11 +200,17 @@
           <td>{{ $producto->Existencia }}</td>
           <td>{{ $producto->Fecha_Caducidad ? \Carbon\Carbon::parse($producto->Fecha_Caducidad)->format('d/m/Y') : '---' }}</td>
           <td class="precio">${{ number_format($producto->Precio, 2) }}</td>
-          <td>{{ $producto->categoria->Nombre ?? '' }}</td>
-          <td>----</td>
+          <td>{{ $producto->categoria->Nombre ?? 'Sin categoría' }}</td>
+          <td>{{ ucfirst($producto->Estado ?? 'activo') }}</td>
           <td>
-            <a href="#" class="btn-editar" title="Editar" style="margin-right: 0.5rem;">✏️</a>
-            <a href="#" class="btn-eliminar" title="Eliminar">🗑️</a>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <a href="{{ url('/catalogos/productos/reabastecer/'.$producto->PK_Id_Producto) }}" 
+                 class="btn-reabastecer" title="Reabastecer">
+                 Reabastecer
+              </a>
+              <a href="{{ url('/catalogos/productos/editar/'.$producto->PK_Id_Producto) }}" class="btn-editar" title="Editar">✏️</a>
+              <a href="{{ url('/catalogos/productos/eliminar/'.$producto->PK_Id_Producto) }}" class="btn-eliminar" title="Eliminar">🗑️</a>
+            </div>
           </td>
         </tr>
         @empty

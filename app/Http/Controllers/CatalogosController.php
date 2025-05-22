@@ -109,6 +109,46 @@ Producto::create([
         return redirect('/catalogos/categorias')->with('success', 'Categoría agregada correctamente.');
     }
 
+    public function editarCategoria($id)
+{
+    $categoria = Categoria::findOrFail($id);
+
+    // Opcional: prepara breadcrumbs si los usas
+    $breadcrumbs = [
+        'Inicio' => url('/'),
+        'Categorías' => url('/catalogos/categorias'),
+        'Editar Categoría' => ''
+    ];
+
+    return view('editores.categorias', compact('categoria', 'breadcrumbs'));
+}
+
+public function actualizarCategoria(Request $request, $id)
+{
+    $request->validate([
+        'Nombre' => 'required|string|max:255',
+        'Descripcion' => 'nullable|string',
+        'Estado' => 'required|string|in:activo,inactivo',
+    ]);
+
+    $categoria = Categoria::findOrFail($id);
+    $categoria->Nombre = $request->Nombre;
+    $categoria->Descripcion = $request->Descripcion;
+    $categoria->estado = $request->Estado;
+    $categoria->save();
+
+    return redirect('/catalogos/categorias')->with('success', 'Categoría actualizada correctamente.');
+}
+
+public function eliminarCategoria($id)
+{
+    $categoria = Categoria::findOrFail($id);
+    $categoria->delete();
+
+    return redirect('/catalogos/categorias')->with('success', 'Categoría eliminada correctamente.');
+}
+
+
     // PROVEEDORES
     public function proveedoresGet(): View
     {

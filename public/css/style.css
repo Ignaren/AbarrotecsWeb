@@ -575,3 +575,30 @@ form label {
   background-color: #4B367C;
   box-shadow: 0 6px 18px rgba(75, 54, 124, 0.8);
 }
+.btn-reabastecer {
+  background-color: #28a745;
+  color: white;
+  font-weight: 700;
+  padding: 0.35rem 0.75rem;
+  border-radius: 12px;
+  box-shadow: 0 3px 8px rgba(40, 167, 69, 0.6);
+  text-decoration: none;
+  font-size: 0.85rem;
+  display: inline-block;
+  margin-right: 0.5rem;
+  transition: background-color 0.3s ease;
+}
+
+.btn-reabastecer:hover {
+  background-color: #1e7e34;
+}
+.btn-editar, .btn-eliminar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 8px;
+  font-size: 1.2rem;
+}

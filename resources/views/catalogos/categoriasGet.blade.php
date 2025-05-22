@@ -124,7 +124,8 @@
           <td>{{ $categoria->PK_Id_Categoria }}</td>
           <td>{{ $categoria->Nombre }}</td>
           <td>{{ $categoria->Descripcion }}</td>
-          <td>----</td>
+          <td>{{ ucfirst($categoria->estado) }}</td>
+
           <td class="acciones">
             <a href="{{ url('/catalogos/categorias/editar/'.$categoria->PK_Id_Categoria) }}" title="Editar">
               <span>✏️</span>
