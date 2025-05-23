@@ -74,3 +74,5 @@ Route::put('/catalogos/clientes/editar/{id}', [CatalogosController::class, 'actu
 
 // Eliminar cliente
 Route::get('/catalogos/clientes/eliminar/{id}', [CatalogosController::class, 'eliminarCliente'])->name('clientes.eliminar');
+
+
