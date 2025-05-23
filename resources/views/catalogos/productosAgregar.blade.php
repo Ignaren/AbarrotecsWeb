@@ -3,7 +3,7 @@
 @section('styles')
 <style>
   .capture-view main.content {
-    max-width: 750px;
+    max-width: 700px;
     padding: 2rem 3rem;
     background-color: white;
     border-radius: 15px;
@@ -12,7 +12,6 @@
     display: flex;
     flex-direction: column;
     gap: 1.8rem;
-    user-select: text;
   }
 
   .capture-view label {
@@ -24,24 +23,50 @@
   }
 
   .capture-view input,
-  .capture-view select,
-  .capture-view textarea {
+  .capture-view textarea,
+  .capture-view select {
     width: 100%;
     padding: 0.6rem 1rem;
     font-size: 1rem;
     border: 2px solid var(--color-principal-oscuro);
     border-radius: 10px;
-    outline-offset: 2px;
-    transition: border-color 0.25s ease, box-shadow 0.25s ease;
     font-family: inherit;
     box-sizing: border-box;
   }
 
-  .capture-view input:focus,
-  .capture-view select:focus,
-  .capture-view textarea:focus {
-    border-color: var(--color-principal);
-    box-shadow: 0 0 8px var(--color-principal);
+  .capture-view .error {
+    color: #e74c3c;
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+    font-weight: 600;
+  }
+
+  .capture-view .alert-errors {
+    background-color: #f8d7da;
+    border: 1px solid #f5c2c7;
+    color: #842029;
+    padding: 1rem 1.25rem;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+
+  .capture-view .alert-errors ul {
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+
+  .breadcrumb {
+    margin-bottom: 1.5rem;
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 0.5rem;
+    font-weight: 500;
+  }
+
+  .breadcrumb li a {
+    color: var(--color-principal);
+    text-decoration: none;
   }
 
   .capture-view button {
@@ -53,28 +78,7 @@
     border: none;
     border-radius: 30px;
     cursor: pointer;
-    box-shadow: 0 6px 18px rgba(122, 95, 255, 0.6);
-    transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
-    user-select: none;
     align-self: flex-start;
-  }
-
-  .capture-view button:hover {
-    background: linear-gradient(45deg, #664ddb, #7f5fe6);
-    box-shadow: 0 10px 30px rgba(102, 77, 219, 0.8);
-    transform: translateY(-2px);
-  }
-
-  .capture-view button:active {
-    transform: translateY(0);
-    box-shadow: 0 4px 12px rgba(102, 77, 219, 0.4);
-  }
-
-  .capture-view .error {
-    color: #e74c3c;
-    font-size: 0.9rem;
-    margin-top: 0.25rem;
-    font-weight: 600;
   }
 </style>
 @endsection
@@ -82,9 +86,29 @@
 @section('content')
 <div class="capture-view">
   <main class="content">
+
+    <ul class="breadcrumb">
+      <li><a href="{{ url('/') }}">Inicio</a></li>
+      <li>›</li>
+      <li><a href="{{ url('/catalogos/productos') }}">Productos</a></li>
+      <li>›</li>
+      <li>Agregar Producto</li>
+    </ul>
+
     <h1>Agregar Producto</h1>
 
-    <form action="{{ url('/catalogos/productos/agregar') }}" method="POST">
+    @if ($errors->any())
+      <div class="alert-errors">
+        <strong>Se encontraron los siguientes errores:</strong>
+        <ul>
+          @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+          @endforeach
+        </ul>
+      </div>
+    @endif
+
+    <form id="productoForm" action="{{ url('/catalogos/productos/agregar') }}" method="POST">
       @csrf
 
       <div class="form-group">
@@ -104,14 +128,6 @@
       </div>
 
       <div class="form-group">
-        <label for="stock_minimo">Stock mínimo</label>
-        <input type="number" name="stock_minimo" id="stock_minimo" value="{{ old('stock_minimo') }}" required min="0">
-        @error('stock_minimo')
-          <div class="error">{{ $message }}</div>
-        @enderror
-      </div>
-
-      <div class="form-group">
         <label for="existencia">Existencia</label>
         <input type="number" name="existencia" id="existencia" value="{{ old('existencia') }}" required min="0">
         @error('existencia')
@@ -121,7 +137,7 @@
 
       <div class="form-group">
         <label for="fecha_entrada">Fecha de entrada</label>
-        <input type="date" name="fecha_entrada" id="fecha_entrada" value="{{ old('fecha_entrada') }}" required>
+        <input type="date" name="fecha_entrada" id="fecha_entrada" value="{{ old('fecha_entrada') }}" required min="{{ date('Y-m-d') }}">
         @error('fecha_entrada')
           <div class="error">{{ $message }}</div>
         @enderror
@@ -160,19 +176,48 @@
 
       <button type="submit">Guardar</button>
     </form>
+
   </main>
 </div>
+@endsection
 
+@section('scripts')
 <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const soloLetrasRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
+
+  const campos = [
+    document.getElementById('nombre'),
+    document.getElementById('descripcion')
+  ];
+
+  campos.forEach(campo => {
+    campo.addEventListener('input', () => {
+      campo.value = campo.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, '');
+    });
+
+    campo.addEventListener('keypress', e => {
+      if (!soloLetrasRegex.test(e.key)) {
+        e.preventDefault();
+      }
+    });
+
+    campo.addEventListener('paste', e => {
+      const textoPegado = (e.clipboardData || window.clipboardData).getData('text');
+      if (!soloLetrasRegex.test(textoPegado)) {
+        e.preventDefault();
+      }
+    });
+  });
+
   const entrada = document.getElementById('fecha_entrada');
   const caducidad = document.getElementById('fecha_caducidad');
 
-  entrada.addEventListener('change', () => {
-    if (entrada.value) {
-      caducidad.min = entrada.value;
-    } else {
-      caducidad.removeAttribute('min');
-    }
-  });
+  if (entrada && caducidad) {
+    entrada.addEventListener('change', () => {
+      caducidad.min = entrada.value || '';
+    });
+  }
+});
 </script>
 @endsection

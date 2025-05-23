@@ -99,12 +99,14 @@
       </ol>
     </nav>
 
-    <form action="{{ url('/catalogos/clientes/agregar') }}" method="POST">
+    <form action="{{ url('/catalogos/clientes/agregar') }}" method="POST" novalidate>
       @csrf
 
       <div class="form-group">
         <label for="Nombre">Nombre</label>
-        <input type="text" name="Nombre" id="Nombre" value="{{ old('Nombre') }}" required>
+        <input type="text" name="Nombre" id="Nombre" value="{{ old('Nombre') }}" required
+          pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+          title="Solo letras y espacios, sin números ni caracteres especiales">
         @error('Nombre')
           <div class="error">{{ $message }}</div>
         @enderror
@@ -128,7 +130,8 @@
 
       <div class="form-group">
         <label for="Telefono">Teléfono</label>
-        <input type="text" name="Telefono" id="Telefono" value="{{ old('Telefono') }}">
+        <input type="text" name="Telefono" id="Telefono" value="{{ old('Telefono') }}"
+          pattern="^\d+$" title="Solo números">
         @error('Telefono')
           <div class="error">{{ $message }}</div>
         @enderror

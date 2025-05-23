@@ -2,134 +2,179 @@
 
 @section('styles')
 <style>
-  main.content {
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-    max-width: 100% !important;
-    margin: 0 auto;
+  .capture-view main.content {
+    max-width: 700px;
+    padding: 2rem 3rem;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(106, 79, 188, 0.1);
+    margin: 2rem auto 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
   }
 
-  form {
-    max-width: 600px;
-    background: white;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(106, 79, 188, 0.15);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #4B367C;
-  }
-
-  label {
+  .capture-view label {
+    font-weight: 600;
+    color: var(--color-principal, #6A4FBC);
+    margin-bottom: 0.5rem;
     display: block;
-    margin-bottom: 0.3rem;
-    font-weight: 600;
+    font-size: 1.1rem;
   }
 
-  input[type="text"],
-  input[type="email"] {
+  .capture-view input,
+  .capture-view textarea,
+  .capture-view select {
     width: 100%;
-    padding: 0.5rem 0.75rem;
-    margin-bottom: 1.2rem;
-    border: 1px solid #6A4FBC;
-    border-radius: 8px;
+    padding: 0.6rem 1rem;
     font-size: 1rem;
-    color: #333;
-    transition: border-color 0.3s ease;
+    border: 2px solid var(--color-principal-oscuro, #4B367C);
+    border-radius: 10px;
+    font-family: inherit;
+    box-sizing: border-box;
   }
 
-  input[type="text"]:focus,
-  input[type="email"]:focus {
-    border-color: #4B367C;
-    outline: none;
-  }
-
-  button[type="submit"] {
-    background-color: #6A4FBC;
-    color: white;
-    font-weight: 700;
-    padding: 0.5rem 1.5rem;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
-  }
-
-  button[type="submit"]:hover {
-    background-color: #4B367C;
-  }
-
-  .errors {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-    padding: 0.75rem 1rem;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-  }
-
-  nav.breadcrumbs {
+  .capture-view .error {
+    color: #e74c3c;
     font-size: 0.9rem;
-    color: #4B367C;
-    margin-bottom: 1rem;
-  }
-  nav.breadcrumbs a {
-    color: #6A4FBC;
+    margin-top: 0.25rem;
     font-weight: 600;
+  }
+
+  .capture-view .alert-errors {
+    background-color: #f8d7da;
+    border: 1px solid #f5c2c7;
+    color: #842029;
+    padding: 1rem 1.25rem;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+
+  .capture-view .alert-errors ul {
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+
+  .breadcrumb {
+    margin-bottom: 1.5rem;
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 0.5rem;
+    font-weight: 500;
+  }
+
+  .breadcrumb li a {
+    color: var(--color-principal, #6A4FBC);
     text-decoration: none;
   }
-  nav.breadcrumbs span.separator {
-    margin: 0 0.4rem;
-  }
-  nav.breadcrumbs span.current {
+
+  .capture-view button {
+    background: linear-gradient(45deg, #7a5fff, #9e77ff);
+    color: white;
+    padding: 0.75rem 2rem;
     font-weight: 700;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    align-self: flex-start;
   }
 </style>
 @endsection
 
 @section('content')
-<main class="content fade-in">
+<div class="capture-view">
+  <main class="content">
 
-  {{-- Breadcrumbs --}}
-  <nav aria-label="breadcrumb" class="breadcrumbs">
-    @foreach ($breadcrumbs as $label => $link)
-      @if ($loop->last)
-        <span class="current">{{ $label }}</span>
-      @else
-        <a href="{{ $link }}">{{ $label }}</a><span class="separator">/</span>
-      @endif
-    @endforeach
-  </nav>
+    <ul class="breadcrumb">
+      <li><a href="{{ url('/') }}">Inicio</a></li>
+      <li>›</li>
+      <li><a href="{{ url('/catalogos/proveedores') }}">Proveedores</a></li>
+      <li>›</li>
+      <li>Agregar Proveedor</li>
+    </ul>
 
-  <h1 style="color: #4B367C; font-weight: 700; margin-bottom: 1.5rem;">Agregar Proveedor</h1>
+    <h1>Agregar Proveedor</h1>
 
-  {{-- Mostrar errores de validación --}}
-  @if ($errors->any())
-    <div class="errors">
-      <ul>
-        @foreach ($errors->all() as $error)
-          <li>{{ $error }}</li>
-        @endforeach
-      </ul>
-    </div>
-  @endif
+    @if ($errors->any())
+      <div class="alert-errors">
+        <strong>Se encontraron los siguientes errores:</strong>
+        <ul>
+          @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+          @endforeach
+        </ul>
+      </div>
+    @endif
 
-  <form action="{{ url('/catalogos/proveedores/agregar') }}" method="POST" novalidate>
-    @csrf
+    <form action="{{ url('/catalogos/proveedores/agregar') }}" method="POST" novalidate>
+      @csrf
 
-    <label for="Nombre">Nombre</label>
-    <input type="text" id="Nombre" name="Nombre" value="{{ old('Nombre') }}" maxlength="100" required>
+      <div class="form-group">
+        <label for="Nombre">Nombre</label>
+        <input
+          type="text"
+          id="Nombre"
+          name="Nombre"
+          value="{{ old('Nombre') }}"
+          maxlength="100"
+          required
+          pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+          title="Solo letras y espacios."
+        >
+        @error('Nombre')
+          <div class="error">{{ $message }}</div>
+        @enderror
+      </div>
 
-    <label for="Direccion">Dirección</label>
-    <input type="text" id="Direccion" name="Direccion" value="{{ old('Direccion') }}" maxlength="255" required>
+      <div class="form-group">
+        <label for="Direccion">Dirección</label>
+        <input
+          type="text"
+          id="Direccion"
+          name="Direccion"
+          value="{{ old('Direccion') }}"
+          maxlength="255"
+          required
+        >
+        @error('Direccion')
+          <div class="error">{{ $message }}</div>
+        @enderror
+      </div>
 
-    <label for="Email">Email</label>
-    <input type="email" id="Email" name="Email" value="{{ old('Email') }}" maxlength="100" required>
+      <div class="form-group">
+        <label for="Email">Email</label>
+        <input
+          type="email"
+          id="Email"
+          name="Email"
+          value="{{ old('Email') }}"
+          maxlength="100"
+          required
+        >
+        @error('Email')
+          <div class="error">{{ $message }}</div>
+        @enderror
+      </div>
 
-    <label for="Telefono">Teléfono</label>
-    <input type="text" id="Telefono" name="Telefono" value="{{ old('Telefono') }}" maxlength="15" required>
+      <div class="form-group">
+        <label for="Telefono">Teléfono</label>
+        <input
+          type="text"
+          id="Telefono"
+          name="Telefono"
+          value="{{ old('Telefono') }}"
+          maxlength="15"
+          required
+        >
+        @error('Telefono')
+          <div class="error">{{ $message }}</div>
+        @enderror
+      </div>
 
-    <button type="submit">Guardar</button>
-  </form>
-</main>
+      <button type="submit">Guardar</button>
+    </form>
+  </main>
+</div>
 @endsection

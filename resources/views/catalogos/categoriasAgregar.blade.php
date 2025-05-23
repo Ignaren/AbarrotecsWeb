@@ -2,7 +2,6 @@
 
 @section('styles')
 <style>
-  /* Usamos solo el estilo para formularios dentro de .capture-view */
   .capture-view main.content {
     max-width: 700px;
     padding: 2rem 3rem;
@@ -13,7 +12,6 @@
     display: flex;
     flex-direction: column;
     gap: 1.8rem;
-    user-select: text;
   }
 
   .capture-view label {
@@ -25,54 +23,15 @@
   }
 
   .capture-view input[type="text"],
+  .capture-view input[type="date"],
   .capture-view textarea {
     width: 100%;
     padding: 0.6rem 1rem;
     font-size: 1rem;
     border: 2px solid var(--color-principal-oscuro);
     border-radius: 10px;
-    outline-offset: 2px;
-    transition: border-color 0.25s ease, box-shadow 0.25s ease;
     font-family: inherit;
-    resize: vertical;
     box-sizing: border-box;
-  }
-
-  .capture-view input[type="text"]:focus,
-  .capture-view textarea:focus {
-    border-color: var(--color-principal);
-    box-shadow: 0 0 8px var(--color-principal);
-  }
-
-  .capture-view ::placeholder {
-    color: var(--color-texto-claro);
-    opacity: 1;
-  }
-
-  .capture-view button {
-    background: linear-gradient(45deg, #7a5fff, #9e77ff);
-    color: white;
-    padding: 0.75rem 2rem;
-    font-weight: 700;
-    font-size: 1.1rem;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    box-shadow: 0 6px 18px rgba(122, 95, 255, 0.6);
-    transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
-    user-select: none;
-    align-self: flex-start;
-  }
-
-  .capture-view button:hover {
-    background: linear-gradient(45deg, #664ddb, #7f5fe6);
-    box-shadow: 0 10px 30px rgba(102, 77, 219, 0.8);
-    transform: translateY(-2px);
-  }
-
-  .capture-view button:active {
-    transform: translateY(0);
-    box-shadow: 0 4px 12px rgba(102, 77, 219, 0.4);
   }
 
   .capture-view .error {
@@ -82,7 +41,6 @@
     font-weight: 600;
   }
 
-  /* Estilo para breadcrumb */
   .breadcrumb {
     margin-bottom: 1.5rem;
     list-style: none;
@@ -95,6 +53,18 @@
   .breadcrumb li a {
     color: var(--color-principal);
     text-decoration: none;
+  }
+
+  .capture-view button {
+    background: linear-gradient(45deg, #7a5fff, #9e77ff);
+    color: white;
+    padding: 0.75rem 2rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    align-self: flex-start;
   }
 </style>
 @endsection
@@ -113,7 +83,7 @@
 
     <h1>Agregar Categoría</h1>
 
-    <form action="{{ url('/catalogos/categorias/agregar') }}" method="POST">
+    <form id="categoriaForm" action="{{ url('/catalogos/categorias/agregar') }}" method="POST">
       @csrf
 
       <div class="form-group">
@@ -132,8 +102,81 @@
         @enderror
       </div>
 
+      <div class="form-group">
+        <label for="Fecha">Fecha</label>
+        <input type="date" name="Fecha" id="Fecha" value="{{ old('Fecha', date('Y-m-d')) }}" required>
+        @error('Fecha')
+          <div class="error">{{ $message }}</div>
+        @enderror
+      </div>
+
       <button type="submit">Guardar</button>
     </form>
+
   </main>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const soloLetrasRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
+
+  const campos = [
+    document.getElementById('Nombre'),
+    document.getElementById('Descripcion')
+  ];
+
+  campos.forEach(campo => {
+    campo.addEventListener('input', () => {
+      campo.value = campo.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, '');
+    });
+
+    campo.addEventListener('keypress', e => {
+      if (!soloLetrasRegex.test(e.key)) {
+        e.preventDefault();
+      }
+    });
+
+    campo.addEventListener('paste', e => {
+      const textoPegado = (e.clipboardData || window.clipboardData).getData('text');
+      if (!soloLetrasRegex.test(textoPegado)) {
+        e.preventDefault();
+      }
+    });
+  });
+
+  // Validar que la fecha sea hoy
+  const fechaInput = document.getElementById('Fecha');
+  if (fechaInput) {
+    const hoy = new Date().toISOString().split('T')[0];
+    fechaInput.setAttribute('min', hoy);
+    fechaInput.setAttribute('max', hoy);
+
+    fechaInput.addEventListener('change', () => {
+      if (fechaInput.value !== hoy) {
+        alert('La fecha debe ser hoy.');
+        fechaInput.value = hoy;
+      }
+    });
+  }
+
+  document.getElementById('categoriaForm').addEventListener('submit', function(e) {
+    let valido = true;
+    campos.forEach(campo => {
+      if (!soloLetrasRegex.test(campo.value.trim())) {
+        valido = false;
+        campo.style.borderColor = '#e74c3c';
+      } else {
+        campo.style.borderColor = '';
+      }
+    });
+
+    if (!valido) {
+      e.preventDefault();
+      alert('Los campos solo deben contener letras y espacios, sin números ni caracteres especiales.');
+    }
+  });
+});
+</script>
 @endsection

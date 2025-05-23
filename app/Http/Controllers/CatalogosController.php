@@ -32,79 +32,83 @@ class CatalogosController extends Controller
         ]);
     }
 
-    public function productosAgregarGet(): View
-    {
-        $categorias = Categoria::all();
+ public function productosAgregarGet(): View
+{
+    $categorias = Categoria::all();
 
-        return view('catalogos.productosAgregar', compact('categorias'));
-    }
+    return view('catalogos.productosAgregar', compact('categorias'));
+}
 
-    public function productosAgregarPost(Request $request)
-    {
-        $request->validate([
-            'nombre' => 'required|max:50',
-            'categoria' => 'required|exists:categoria,PK_Id_Categoria',
-            'descripcion' => 'required',
-            'stock_minimo' => 'required|numeric|min:0',
-            'existencia' => 'required|numeric|min:0',
-            'fecha_entrada' => 'required|date',
-            'fecha_caducidad' => 'nullable|date|after_or_equal:fecha_entrada',
-            'precio' => 'required|numeric|min:0',
-        ]);
+public function productosAgregarPost(Request $request)
+{
+    $hoy = date('Y-m-d');
 
-        Producto::create([
-            'Nombre' => mb_convert_case($request->nombre, MB_CASE_TITLE, "UTF-8"),
-            'Descripcion' => mb_convert_case($request->descripcion, MB_CASE_TITLE, "UTF-8"),
-            'Stock_Minimo' => $request->stock_minimo,
-            'Existencia' => $request->existencia,
-            'Fecha_Entrada' => $request->fecha_entrada,
-            'Fecha_Caducidad' => $request->fecha_caducidad ?: null,
-            'Precio' => $request->precio,
-            'FK_Id_Categoria' => $request->categoria,
-            'Estado' => 'activo', // Por defecto activo
-        ]);
+    $request->validate([
+        'nombre' => ['required', 'max:50', 'regex:/^[A-Za-z0-9\s]+$/'],
+        'categoria' => ['required', 'exists:categoria,PK_Id_Categoria'],
+        'descripcion' => ['required', 'regex:/^[A-Za-z0-9\s]+$/'],
+        'existencia' => ['required', 'numeric', 'min:1'], // min 1 como en JS
+        'fecha_entrada' => ['required', 'date', "after_or_equal:$hoy"],
+        'fecha_caducidad' => ['nullable', 'date', 'after_or_equal:fecha_entrada'],
+        'precio' => ['required', 'numeric', 'min:0'],
+    ], [
+        'nombre.regex' => 'El nombre no debe contener caracteres especiales.',
+        'descripcion.regex' => 'La descripción no debe contener caracteres especiales.',
+        'fecha_entrada.after_or_equal' => 'La fecha de entrada no puede ser anterior a hoy.',
+        'fecha_caducidad.after_or_equal' => 'La fecha de caducidad no puede ser anterior a la fecha de entrada.',
+        'existencia.min' => 'La existencia debe ser mayor a 0.',
+    ]);
 
-        return redirect('/catalogos/productos')->with('success', 'Producto agregado correctamente.');
-    }
+    Producto::create([
+        'Nombre' => mb_convert_case(trim($request->nombre), MB_CASE_TITLE, "UTF-8"),
+        'Descripcion' => mb_convert_case(trim($request->descripcion), MB_CASE_TITLE, "UTF-8"),
+        'Existencia' => $request->existencia,
+        'Fecha_Entrada' => $request->fecha_entrada,
+        'Fecha_Caducidad' => $request->fecha_caducidad ?: null,
+        'Precio' => $request->precio,
+        'FK_Id_Categoria' => $request->categoria,
+        'Estado' => 'activo',
+    ]);
 
-    // Mostrar el formulario para editar un producto
-    public function EditarProducto($id)
-    {
-        $producto = Producto::findOrFail($id);
-        $categorias = Categoria::all();
+    return redirect('/catalogos/productos')->with('success', 'Producto agregado correctamente.');
+}
 
-        $breadcrumbs = [
-            'Inicio' => url('/'),
-            'Productos' => url('/catalogos/productos'),
-            'Editar' => '',
-        ];
 
-        return view('editores.producto', compact('producto', 'categorias', 'breadcrumbs'));
-    }
 
-    // Procesar el formulario POST para actualizar el producto
+ // Mostrar formulario para editar
+public function EditarProducto($id)
+{
+    $producto = Producto::findOrFail($id);
+    $categorias = Categoria::all();
+
+    return view('editores.producto', compact('producto', 'categorias'));
+}
+
+// Procesar formulario POST actualizar producto
 public function EditarProductoPost(Request $request, $id)
 {
     $request->validate([
-        'Nombre' => 'required|string|max:255',
-        'Descripcion' => 'nullable|string|max:1000',
-        'Existencia' => 'required|integer|min:0',
-        'Fecha_Caducidad' => 'nullable|date',
-        'Precio' => 'required|numeric|min:0',
-        'FK_Id_Categoria' => 'required|exists:categoria,PK_Id_Categoria',
-        'Estado' => 'required|string|in:activo,inactivo',
+        'nombre' => ['required', 'string', 'max:255', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s]+$/'],
+        'descripcion' => ['nullable', 'string', 'max:1000', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s]*$/'],
+        'existencia' => 'required|integer|min:0',
+        'fecha_caducidad' => 'nullable|date',
+        'precio' => 'required|numeric|min:0',
+        'fk_id_categoria' => 'required|exists:categoria,PK_Id_Categoria',
+        'estado' => 'required|string|in:activo,inactivo',
+    ], [
+        'nombre.regex' => 'El nombre no debe contener caracteres especiales.',
+        'descripcion.regex' => 'La descripción no debe contener caracteres especiales.',
     ]);
 
     $producto = Producto::findOrFail($id);
 
-    // Convertir texto a Title Case según lo solicitado
-    $producto->Nombre = ucwords(strtolower($request->Nombre));
-    $producto->Descripcion = $request->Descripcion ? ucwords(strtolower($request->Descripcion)) : null;
-    $producto->Existencia = $request->Existencia;
-    $producto->Fecha_Caducidad = $request->Fecha_Caducidad;
-    $producto->Precio = $request->Precio;
-    $producto->FK_Id_Categoria = $request->FK_Id_Categoria;
-    $producto->Estado = $request->Estado;
+    $producto->Nombre = ucwords(strtolower($request->nombre));
+    $producto->Descripcion = $request->descripcion ? ucwords(strtolower($request->descripcion)) : null;
+    $producto->Existencia = $request->existencia;
+    $producto->Fecha_Caducidad = $request->fecha_caducidad;
+    $producto->Precio = $request->precio;
+    $producto->FK_Id_Categoria = $request->fk_id_categoria;
+    $producto->Estado = $request->estado;
 
     $producto->save();
 
@@ -112,14 +116,6 @@ public function EditarProductoPost(Request $request, $id)
 }
 
 
-    // Método para eliminar producto (sin vista)
-public function EliminarProducto($id)
-{
-    $producto = Producto::findOrFail($id);
-    $producto->delete();
-
-    return redirect()->route('productos.index')->with('success', 'Producto eliminado correctamente.');
-}
 
 
     // Mostrar formulario de reabastecer producto
@@ -151,6 +147,14 @@ public function EliminarProducto($id)
         return redirect('/catalogos/productos')->with('success', 'Producto reabastecido correctamente.');
     }
 
+        // Método para eliminar producto (sin vista)
+public function EliminarProducto($id)
+{
+    $producto = Producto::findOrFail($id);
+    $producto->delete();
+
+    return redirect()->route('productos.index')->with('success', 'Producto eliminado correctamente.');
+}
 
     // CATEGORÍAS
     public function categoriasGet(): View
@@ -165,65 +169,71 @@ public function EliminarProducto($id)
             ]
         ]);
     }
-
-    public function categoriasAgregarGet(): View
-    {
-        return view('catalogos.categoriasAgregar', [
-            'breadcrumbs' => [
-                'Inicio' => url('/'),
-                'Categorías' => url('/catalogos/categorias'),
-                'Agregar' => url('/catalogos/categorias/agregar')
-            ]
-        ]);
-    }
-
-    public function categoriasAgregarPost(Request $request)
-    {
-        $validated = $request->validate([
-            'Nombre' => 'required|max:50',
-            'Descripcion' => 'required',
-        ]);
-
-        $nombreFormateado = mb_convert_case($validated['Nombre'], MB_CASE_TITLE, "UTF-8");
-        $descripcionFormateada = mb_convert_case($validated['Descripcion'], MB_CASE_TITLE, "UTF-8");
-
-        Categoria::create([
-            'Nombre' => $nombreFormateado,
-            'Descripcion' => $descripcionFormateada,
-        ]);
-
-        return redirect('/catalogos/categorias')->with('success', 'Categoría agregada correctamente.');
-    }
-
-    public function editarCategoria($id)
-    {
-        $categoria = Categoria::findOrFail($id);
-
-        $breadcrumbs = [
+public function categoriasAgregarGet(): View
+{
+    return view('catalogos.categoriasAgregar', [
+        'breadcrumbs' => [
             'Inicio' => url('/'),
             'Categorías' => url('/catalogos/categorias'),
-            'Editar Categoría' => ''
-        ];
+            'Agregar' => url('/catalogos/categorias/agregar')
+        ]
+    ]);
+}
 
-        return view('editores.categorias', compact('categoria', 'breadcrumbs'));
-    }
+public function categoriasAgregarPost(Request $request)
+{
+    $validated = $request->validate([
+        'Nombre' => ['required', 'max:50', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u'],
+        'Descripcion' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u'],
+    ], [
+        'Nombre.regex' => 'El campo Nombre solo debe contener letras y espacios.',
+        'Descripcion.regex' => 'El campo Descripción solo debe contener letras y espacios.',
+    ]);
 
-    public function actualizarCategoria(Request $request, $id)
-    {
-        $request->validate([
-            'Nombre' => 'required|string|max:255',
-            'Descripcion' => 'nullable|string',
-            'Estado' => 'required|string|in:activo,inactivo',
-        ]);
+    $nombreFormateado = mb_convert_case($validated['Nombre'], MB_CASE_TITLE, "UTF-8");
+    $descripcionFormateada = mb_convert_case($validated['Descripcion'], MB_CASE_TITLE, "UTF-8");
 
-        $categoria = Categoria::findOrFail($id);
-        $categoria->Nombre = mb_convert_case($request->Nombre, MB_CASE_TITLE, "UTF-8");
-        $categoria->Descripcion = mb_convert_case($request->Descripcion, MB_CASE_TITLE, "UTF-8");
-        $categoria->estado = $request->Estado;
-        $categoria->save();
+    Categoria::create([
+        'Nombre' => $nombreFormateado,
+        'Descripcion' => $descripcionFormateada,
+    ]);
 
-        return redirect('/catalogos/categorias')->with('success', 'Categoría actualizada correctamente.');
-    }
+    return redirect('/catalogos/categorias')->with('success', 'Categoría agregada correctamente.');
+}
+
+public function editarCategoria($id)
+{
+    $categoria = Categoria::findOrFail($id);
+
+    $breadcrumbs = [
+        'Inicio' => url('/'),
+        'Categorías' => url('/catalogos/categorias'),
+        'Editar Categoría' => ''
+    ];
+
+    return view('editores.categorias', compact('categoria', 'breadcrumbs'));
+}
+
+public function actualizarCategoria(Request $request, $id)
+{
+    $request->validate([
+        'Nombre' => ['required', 'string', 'max:255', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u'],
+        'Descripcion' => ['nullable', 'string', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]*$/u'],
+        'Estado' => ['required', 'string', 'in:activo,inactivo'],
+    ], [
+        'Nombre.regex' => 'El campo Nombre solo debe contener letras y espacios.',
+        'Descripcion.regex' => 'El campo Descripción solo debe contener letras y espacios.',
+    ]);
+
+    $categoria = Categoria::findOrFail($id);
+    $categoria->Nombre = mb_convert_case($request->Nombre, MB_CASE_TITLE, "UTF-8");
+    $categoria->Descripcion = mb_convert_case($request->Descripcion, MB_CASE_TITLE, "UTF-8");
+    $categoria->estado = $request->Estado;
+    $categoria->save();
+
+    return redirect('/catalogos/categorias')->with('success', 'Categoría actualizada correctamente.');
+}
+
 
     public function eliminarCategoria($id)
     {
@@ -247,61 +257,74 @@ public function EliminarProducto($id)
         ]);
     }
 
-    public function proveedoresAgregarGet(): View
-    {
-        return view('catalogos.proveedoresAgregar', [
-            'breadcrumbs' => [
-                'Inicio' => url('/'),
-                'Proveedores' => url('/catalogos/proveedores'),
-                'Agregar' => url('/catalogos/proveedores/agregar')
-            ]
-        ]);
-    }
-
-    public function proveedoresAgregarPost(Request $request)
-    {
-        $validated = $request->validate([
-            'Nombre' => 'required|max:100',
-            'Direccion' => 'required|max:255',
-            'Email' => 'required|email|max:100',
-            'Telefono' => 'required|max:15',
-        ]);
-
-        $validated['Nombre'] = mb_convert_case($validated['Nombre'], MB_CASE_TITLE, "UTF-8");
-        $validated['Direccion'] = mb_convert_case($validated['Direccion'], MB_CASE_TITLE, "UTF-8");
-
-        Proveedor::create($validated);
-
-        return redirect('/catalogos/proveedores')->with('success', 'Proveedor agregado correctamente.');
-    }
-
-    // Mostrar formulario para editar proveedor
-    public function EditarProveedor($id)
-    {
-        $proveedor = Proveedor::findOrFail($id);
-        $breadcrumbs = [
-            'Inicio' => '/',
+public function proveedoresAgregarGet(): View
+{
+    return view('catalogos.proveedoresAgregar', [
+        'breadcrumbs' => [
+            'Inicio' => url('/'),
             'Proveedores' => url('/catalogos/proveedores'),
-            'Editar Proveedor' => '',
-        ];
-        return view('editores.proveedores', compact('proveedor', 'breadcrumbs'));
-    }
+            'Agregar' => url('/catalogos/proveedores/agregar')
+        ]
+    ]);
+}
 
-    // Actualizar proveedor (procesar el form de editar)
+public function proveedoresAgregarPost(Request $request)
+{
+    $validated = $request->validate([
+        'Nombre' => ['required', 'max:100', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/'],
+        'Direccion' => 'required|max:255',
+        'Email' => 'required|email|max:100',
+        'Telefono' => 'required|max:15',
+    ], [
+        'Nombre.required' => 'El nombre es obligatorio.',
+        'Nombre.max' => 'El nombre no debe exceder los 100 caracteres.',
+        'Nombre.regex' => 'El nombre solo puede contener letras y espacios.',
+        'Direccion.required' => 'La dirección es obligatoria.',
+        'Direccion.max' => 'La dirección no debe exceder los 255 caracteres.',
+        'Email.required' => 'El email es obligatorio.',
+        'Email.email' => 'El email debe ser una dirección válida.',
+        'Email.max' => 'El email no debe exceder los 100 caracteres.',
+        'Telefono.required' => 'El teléfono es obligatorio.',
+        'Telefono.max' => 'El teléfono no debe exceder los 15 caracteres.',
+    ]);
+
+    $validated['Nombre'] = mb_convert_case($validated['Nombre'], MB_CASE_TITLE, "UTF-8");
+    $validated['Direccion'] = mb_convert_case($validated['Direccion'], MB_CASE_TITLE, "UTF-8");
+
+    Proveedor::create($validated);
+
+    return redirect('/catalogos/proveedores')->with('success', 'Proveedor agregado correctamente.');
+}
+
+ // Mostrar formulario para editar proveedor
+public function EditarProveedor($id)
+{
+    $proveedor = Proveedor::findOrFail($id);
+    $breadcrumbs = [
+        'Inicio' => '/',
+        'Proveedores' => url('/catalogos/proveedores'),
+        'Editar Proveedor' => '',
+    ];
+    return view('editores.proveedores', compact('proveedor', 'breadcrumbs'));
+}
+
+// Actualizar proveedor (procesar el form de editar)
 public function ActualizarProveedor(Request $request, $id)
 {
     $request->validate([
-        'Nombre' => 'required|string|max:255',
+        'Nombre' => ['required', 'string', 'max:255', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/'],
         'Telefono' => 'required|string|max:20',
-        'Direccion' => 'required|string|max:255',
+        'Direccion' => ['required', 'string', 'max:255'],
         'Estado' => 'required|in:Activo,Inactivo',
+    ], [
+        'Nombre.regex' => 'El nombre solo puede contener letras y espacios.',
     ]);
 
     $proveedor = Proveedor::findOrFail($id);
 
-    $proveedor->Nombre = ucwords(strtolower($request->Nombre));
+    $proveedor->Nombre = mb_convert_case($request->Nombre, MB_CASE_TITLE, "UTF-8");
     $proveedor->Telefono = $request->Telefono;
-    $proveedor->Direccion = ucwords(strtolower($request->Direccion));
+    $proveedor->Direccion = mb_convert_case($request->Direccion, MB_CASE_TITLE, "UTF-8");
     $proveedor->Estado = $request->Estado;
 
     $proveedor->save();
@@ -334,72 +357,87 @@ public function ActualizarProveedor(Request $request, $id)
         ]);
     }
 
-    public function clientesAgregarGet(): View
-    {
-        return view('catalogos.clientesAgregar', [
-            'breadcrumbs' => [
-                'Inicio' => url('/'),
-                'Clientes' => url('/catalogos/clientes'),
-                'Agregar' => url('/catalogos/clientes/agregar')
-            ]
-        ]);
+// Mostrar formulario para agregar cliente
+public function clientesAgregarGet(): View
+{
+    return view('catalogos.clientesAgregar', [
+        'breadcrumbs' => [
+            'Inicio' => url('/'),
+            'Clientes' => url('/catalogos/clientes'),
+            'Agregar' => url('/catalogos/clientes/agregar')
+        ]
+    ]);
+}
+
+// Procesar el formulario para agregar cliente
+public function clientesAgregarPost(Request $request)
+{
+    $validated = $request->validate([
+        'Nombre' => ['required', 'max:50', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/'],
+        'Email' => 'nullable|email|max:50',
+        'RFC' => 'nullable|max:50',
+        'Telefono' => 'nullable|numeric',
+        'Direccion' => 'nullable|max:100',
+    ], [
+        'Nombre.regex' => 'No se permiten Numeros/Caracteres especiales',
+    ]);
+
+    $validated['Nombre'] = mb_convert_case($validated['Nombre'], MB_CASE_TITLE, "UTF-8");
+    if (!empty($validated['Direccion'])) {
+        $validated['Direccion'] = mb_convert_case($validated['Direccion'], MB_CASE_TITLE, "UTF-8");
     }
 
-    public function clientesAgregarPost(Request $request)
-    {
-        $validated = $request->validate([
-            'Nombre' => 'required|max:50',
-            'Email' => 'nullable|email|max:50',
-            'RFC' => 'nullable|max:50',
-            'Telefono' => 'nullable|numeric',
-            'Direccion' => 'nullable|max:100',
-        ]);
+    $validated['Estado'] = 'Activo';
 
-        $validated['Nombre'] = mb_convert_case($validated['Nombre'], MB_CASE_TITLE, "UTF-8");
-        if (!empty($validated['Direccion'])) {
-            $validated['Direccion'] = mb_convert_case($validated['Direccion'], MB_CASE_TITLE, "UTF-8");
-        }
+    Cliente::create($validated);
 
-        Cliente::create($validated);
+    return redirect('/catalogos/clientes')->with('success', 'Cliente agregado correctamente.');
+}
 
-        return redirect('/catalogos/clientes')->with('success', 'Cliente agregado correctamente.');
-    }
-    public function editarCliente($id)
+// Mostrar formulario para editar cliente
+public function editarCliente($id): View
 {
     $cliente = Cliente::findOrFail($id);
     return view('editores.clientes', compact('cliente'));
 }
 
+// Procesar formulario para actualizar cliente
 public function actualizarCliente(Request $request, $id)
 {
     $request->validate([
-        'Nombre' => 'required|string|max:255',
+        'Nombre' => ['required', 'string', 'max:255', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/'],
         'Email' => 'required|email|max:255',
         'RFC' => 'required|string|max:13',
         'Telefono' => 'required|string|max:15',
         'Direccion' => 'required|string|max:255',
         'Estado' => 'required|in:Activo,Inactivo',
+    ], [
+        'Nombre.regex' => 'No se permiten Numeros/Caracteres especiales',
     ]);
 
     $cliente = Cliente::findOrFail($id);
-    $cliente->Nombre = ucwords(strtolower($request->Nombre));
+
+    $cliente->Nombre = mb_convert_case($request->Nombre, MB_CASE_TITLE, "UTF-8");
     $cliente->Email = $request->Email;
     $cliente->RFC = strtoupper($request->RFC);
     $cliente->Telefono = $request->Telefono;
-    $cliente->Direccion = ucwords(strtolower($request->Direccion));
+    $cliente->Direccion = mb_convert_case($request->Direccion, MB_CASE_TITLE, "UTF-8");
     $cliente->Estado = $request->Estado;
+
     $cliente->save();
 
-    return redirect()->route('clientes.index')->with('success', 'Cliente actualizado correctamente.');
+    return redirect('/catalogos/clientes')->with('success', 'Cliente actualizado correctamente.');
 }
 
+// (Opcional) Eliminar cliente
 public function eliminarCliente($id)
 {
     $cliente = Cliente::findOrFail($id);
     $cliente->delete();
 
-    return redirect()->route('clientes.index')->with('success', 'Cliente eliminado exitosamente.');
+    return redirect('/catalogos/clientes')->with('success', 'Cliente eliminado exitosamente.');
 }
+
 
 
     // VENTAS

@@ -14,7 +14,9 @@
     <input type="number" id="cantidad" name="cantidad" min="1" required>
 
     <label for="fecha_entrada" style="margin-top: 1rem;">Fecha de Entrada</label>
-    <input type="date" id="fecha_entrada" name="fecha_entrada" value="{{ old('fecha_entrada', date('Y-m-d')) }}" required>
+    <input type="date" id="fecha_entrada" name="fecha_entrada" 
+           value="{{ old('fecha_entrada', date('Y-m-d')) }}" 
+           min="{{ date('Y-m-d') }}" required>
 
     <label for="fecha_caducidad" style="margin-top: 1rem;">Fecha de Caducidad (opcional)</label>
     <input type="date" id="fecha_caducidad" name="fecha_caducidad" value="{{ old('fecha_caducidad') }}">

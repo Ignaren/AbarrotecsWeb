@@ -8,7 +8,11 @@ class Producto extends Model
     protected $table = 'producto';
     protected $primaryKey = 'PK_Id_Producto';
     public $timestamps = false;
-    protected $fillable = ['Nombre', 'Descripcion', 'Stock_Minimo', 'Existencia', 'Fecha_Entrada', 'Fecha_Caducidad', 'Precio', 'FK_Id_Categoria'];
+    protected $fillable = [
+    'Nombre', 'Descripcion', 'Existencia', 'Fecha_Entrada',
+    'Fecha_Caducidad', 'Precio', 'Estado', 'FK_Id_Categoria'
+];
+
 
     public function categoria()
     {

@@ -602,3 +602,16 @@ form label {
   border-radius: 8px;
   font-size: 1.2rem;
 }
+.error {
+  color: #b71c1c;
+  background-color: #fdecea;
+  border: 1.5px solid #f5c6cb;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+  border-radius: 6px;
+  text-align: left;
+  box-shadow: none;
+  animation: none;
+}
