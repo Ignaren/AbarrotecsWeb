@@ -137,7 +137,7 @@
 
       <div class="form-group">
         <label for="fecha_entrada">Fecha de entrada</label>
-        <input type="date" name="fecha_entrada" id="fecha_entrada" value="{{ old('fecha_entrada') }}" required min="{{ date('Y-m-d') }}">
+        <input type="date" name="fecha_entrada" id="fecha_entrada" value="{{ old('fecha_entrada') }}" required max="{{ date('Y-m-d') }}">
         @error('fecha_entrada')
           <div class="error">{{ $message }}</div>
         @enderror
@@ -184,7 +184,8 @@
 @section('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const soloLetrasRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
+  // Permitir letras, números y espacios (no caracteres especiales)
+  const soloLetrasNumerosRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s]+$/;
 
   const campos = [
     document.getElementById('nombre'),
@@ -193,18 +194,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   campos.forEach(campo => {
     campo.addEventListener('input', () => {
-      campo.value = campo.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, '');
+      campo.value = campo.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s]/g, '');
     });
 
     campo.addEventListener('keypress', e => {
-      if (!soloLetrasRegex.test(e.key)) {
+      if (!soloLetrasNumerosRegex.test(e.key)) {
         e.preventDefault();
       }
     });
 
     campo.addEventListener('paste', e => {
       const textoPegado = (e.clipboardData || window.clipboardData).getData('text');
-      if (!soloLetrasRegex.test(textoPegado)) {
+      if (!soloLetrasNumerosRegex.test(textoPegado)) {
         e.preventDefault();
       }
     });
@@ -214,9 +215,26 @@ document.addEventListener('DOMContentLoaded', () => {
   const caducidad = document.getElementById('fecha_caducidad');
 
   if (entrada && caducidad) {
-    entrada.addEventListener('change', () => {
-      caducidad.min = entrada.value || '';
-    });
+    function actualizarMinCaducidad() {
+      if (entrada.value) {
+        // La fecha mínima de caducidad es un día después de la fecha de entrada
+        const entradaDate = new Date(entrada.value);
+        entradaDate.setDate(entradaDate.getDate() + 1);
+        const minCaducidad = entradaDate.toISOString().split('T')[0];
+        caducidad.min = minCaducidad;
+        // Si la fecha de caducidad es menor a la mínima, la limpia
+        if (caducidad.value && caducidad.value < minCaducidad) {
+          caducidad.value = '';
+        }
+      } else {
+        caducidad.min = '';
+      }
+    }
+
+    entrada.addEventListener('change', actualizarMinCaducidad);
+
+    // Ejecutar al cargar la página por si ya hay valor
+    actualizarMinCaducidad();
   }
 });
 </script>

@@ -52,6 +52,7 @@ Route::get('/catalogos/productos/editar/{id}', [CatalogosController::class, 'Edi
 Route::put('/catalogos/productos/editar/{id}', [CatalogosController::class, 'EditarProductoPost'])->name('productos.actualizar');
 
 
+
 // Eliminadores (usando GET para facilitar)
 Route::get('/catalogos/categorias/eliminar/{id}', [CatalogosController::class, 'eliminarCategoria'])->name('categorias.eliminar');
 Route::delete('/catalogos/productos/eliminar/{id}', [CatalogosController::class, 'EliminarProducto'])->name('productos.eliminar');
@@ -75,4 +76,8 @@ Route::put('/catalogos/clientes/editar/{id}', [CatalogosController::class, 'actu
 // Eliminar cliente
 Route::get('/catalogos/clientes/eliminar/{id}', [CatalogosController::class, 'eliminarCliente'])->name('clientes.eliminar');
 
-
+//rutas para ver la vista de reportes
+Route::get('/reportes', [CatalogosController::class, 'reportes'])->name('reportes.index');
+// Rutas para generar reportes
+Route::get('/reportes/venta_Mensual', [CatalogosController::class, 'ventaMensual']);
+Route::get('/reportes/venta_Diaria', [CatalogosController::class, 'ventaDiaria']);
