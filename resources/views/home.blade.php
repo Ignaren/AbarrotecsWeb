@@ -46,6 +46,13 @@
         <div class="tooltip-below">Registra y consulta las ventas</div>
       </a>
     </div>
+
+    <div class="btn-large-group fade-in" style="margin-top: 40px;">
+      <a href="{{ url('/catalogos/reportes') }}" class="btn-large">
+        Reportes
+        <div class="tooltip-below">Genera reportes de ventas y productos</div>
+      </a>
+    </div>
   </div>
 
 </main>
