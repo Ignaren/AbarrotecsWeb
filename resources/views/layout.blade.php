@@ -44,6 +44,8 @@
         <a href="{{ url('/catalogos/proveedores') }}">Proveedores</a>
         <a href="{{ url('/catalogos/clientes') }}">Clientes</a>
         <a href="{{ url('/catalogos/ventas') }}">Ventas</a>
+
+        <a href="{{ url('/reportes') }}">Reportes</a>
         <a href="{{ url('/catalogos/reportes') }}">Reportes</a>
       </div>
     </nav>

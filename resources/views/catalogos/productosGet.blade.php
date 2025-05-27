@@ -2,130 +2,35 @@
 
 @section('styles')
 <style>
-  main.content {
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-    max-width: 100% !important;
-    margin: 0 auto;
-  }
-
-  .table-wrapper {
-    overflow-x: auto;
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(106, 79, 188, 0.15);
-    background: white;
-    border: 1px solid #6A4FBC;
-  }
-
-  table {
-    width: 100% !important;
-    border-collapse: separate;
-    border-spacing: 0 15px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 1rem;
-    color: #333;
-    min-width: 850px;
-  }
-
-  thead tr {
-    background-color: #6A4FBC;
-    color: white;
-    text-align: left;
-    border-radius: 12px;
-  }
-
-  thead th {
-    padding: 18px 25px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-
-  thead th:first-child {
-    border-radius: 12px 0 0 12px;
-  }
-
-  thead th:last-child {
-    border-radius: 0 12px 12px 0;
-  }
-
-  tbody tr {
-    background: #f9f9fb;
-    box-shadow: 0 2px 7px rgba(106, 79, 188, 0.1);
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    cursor: default;
-  }
-
-  tbody tr:hover {
-    background-color: #e5defb;
-    transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(106, 79, 188, 0.3);
-  }
-
-  tbody td {
-    padding: 18px 25px;
-    border-left: 4px solid transparent;
-    transition: border-color 0.3s ease;
-    white-space: nowrap;
-    vertical-align: middle;
-  }
-
-  tbody tr:hover td {
-    border-left-color: #6A4FBC;
-  }
-
-  tbody td.precio {
-    font-weight: 700;
+  .pagination-summary {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.95rem;
+    margin: 0.5rem 0 0.5rem;
     color: #4B367C;
   }
-
-  .btn-editar, .btn-eliminar, .btn-reabastecer {
-    font-weight: 700;
-    padding: 0.35rem 0.75rem;
-    border-radius: 12px;
-    box-shadow: 0 3px 8px rgba(106, 79, 188, 0.6);
+  .pagination-summary .pagination-links {
+    margin-bottom: 0.2rem;
+  }
+  .pagination-summary .pagination-links a,
+  .pagination-summary .pagination-links span {
+    color: #4B367C;
+    font-weight: 600;
+    font-size: 1rem;
+    margin: 0 0.2rem;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .pagination-summary .pagination-links span[aria-disabled="true"] {
+    color: #aaa;
     text-decoration: none;
-    font-size: 0.85rem;
-    display: inline-block;
-    margin-right: 0.5rem;
+    cursor: default;
   }
-
-  .btn-editar {
-    background-color: #6A4FBC;
-    color: white;
-  }
-
-  .btn-editar:hover {
-    background-color: #4B367C;
-  }
-
-  .btn-eliminar {
-    background-color: #dc3545;
-    color: white;
-    box-shadow: 0 3px 8px rgba(220, 53, 69, 0.6);
-  }
-
-  .btn-eliminar:hover {
-    background-color: #b02a37;
-  }
-
-  .btn-reabastecer {
-    background-color: #28a745;
-    color: white;
-    box-shadow: 0 3px 8px rgba(40, 167, 69, 0.6);
-  }
-
-  .btn-reabastecer:hover {
-    background-color: #1e7e34;
-  }
-
-  .table-wrapper::-webkit-scrollbar {
-    height: 8px;
-  }
-
-  .table-wrapper::-webkit-scrollbar-thumb {
-    background: #6A4FBC;
-    border-radius: 10px;
+  .pagination-summary .pagination-info {
+    font-size: 0.95rem;
+    color: #333;
+    margin-top: 0.1rem;
   }
 </style>
 @endsection
@@ -151,7 +56,6 @@
 
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
     <h1 style="color: #4B367C; font-weight: 700; margin: 0;">Productos</h1>
-
     <a href="/catalogos/productos/agregar" class="btn-agregar" style="
       background-color: #6A4FBC;
       color: white;
@@ -210,11 +114,10 @@
               </a>
               <a href="{{ url('/catalogos/productos/editar/'.$producto->PK_Id_Producto) }}" class="btn-editar" title="Editar">✏️</a>
               <form action="{{ url('/catalogos/productos/eliminar/'.$producto->PK_Id_Producto) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este producto?');">
-  @csrf
-  @method('DELETE')
-  <button type="submit" class="btn-eliminar" title="Eliminar">🗑️</button>
-</form>
-
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn-eliminar" title="Eliminar">🗑️</button>
+              </form>
             </div>
           </td>
         </tr>
@@ -226,6 +129,30 @@
       </tbody>
     </table>
   </div>
+
+  {{-- Paginación personalizada abajo --}}
+  @if ($productos->hasPages())
+    <div class="pagination-summary">
+      <div class="pagination-links">
+        {{-- Previous --}}
+        @if ($productos->onFirstPage())
+          <span aria-disabled="true">« anterior</span>
+        @else
+          <a href="{{ $productos->previousPageUrl() }}">« anterior</a>
+        @endif
+
+        {{-- Next --}}
+        @if ($productos->hasMorePages())
+          <a href="{{ $productos->nextPageUrl() }}">siguiente »</a>
+        @else
+          <span aria-disabled="true">Next »</span>
+        @endif
+      </div>
+      <div class="pagination-info">
+        Showing {{ $productos->firstItem() }} to {{ $productos->lastItem() }} of {{ $productos->total() }} results
+      </div>
+    </div>
+  @endif
 
 </main>
 @endsection

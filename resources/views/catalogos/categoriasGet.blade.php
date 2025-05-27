@@ -1,3 +1,4 @@
+
 @extends('layout')
 
 @section('styles')
@@ -10,8 +11,8 @@
   }
 
   table {
-    width: 100% !important; /* Que ocupe todo el ancho del contenedor */
-    min-width: unset;       /* No limitar ancho mínimo */
+    width: 100% !important;
+    min-width: unset;
     border-collapse: separate;
     border-spacing: 0 10px;
     font-family: Arial, sans-serif;
@@ -41,22 +42,48 @@
     box-shadow: 0 2px 5px rgba(106, 79, 188, 0.1);
   }
 
-  /* Espacio entre emojis de acciones */
   .acciones {
     display: flex;
-    gap: 1rem; /* espacio entre emojis */
+    gap: 1rem;
   }
-
-  /* Cursor pointer en emojis */
   .acciones span {
     cursor: pointer;
     font-size: 1.2rem;
     user-select: none;
   }
-
-  /* Opcional: cambio de color al pasar el mouse */
   .acciones span:hover {
     color: #6A4FBC;
+  }
+
+  .pagination-summary {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.95rem;
+    margin: 0.5rem 0 0.5rem;
+    color: #4B367C;
+  }
+  .pagination-summary .pagination-links {
+    margin-bottom: 0.2rem;
+  }
+  .pagination-summary .pagination-links a,
+  .pagination-summary .pagination-links span {
+    color: #4B367C;
+    font-weight: 600;
+    font-size: 1rem;
+    margin: 0 0.2rem;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .pagination-summary .pagination-links span[aria-disabled="true"] {
+    color: #aaa;
+    text-decoration: none;
+    cursor: default;
+  }
+  .pagination-summary .pagination-info {
+    font-size: 0.95rem;
+    color: #333;
+    margin-top: 0.1rem;
   }
 </style>
 @endsection
@@ -125,7 +152,6 @@
           <td>{{ $categoria->Nombre }}</td>
           <td>{{ $categoria->Descripcion }}</td>
           <td>{{ ucfirst($categoria->estado) }}</td>
-
           <td class="acciones">
             <a href="{{ url('/catalogos/categorias/editar/'.$categoria->PK_Id_Categoria) }}" title="Editar">
               <span>✏️</span>
@@ -143,6 +169,30 @@
       </tbody>
     </table>
   </div>
+
+  {{-- Paginación personalizada abajo --}}
+  @if ($categorias->hasPages())
+    <div class="pagination-summary">
+      <div class="pagination-links">
+        {{-- Previous --}}
+        @if ($categorias->onFirstPage())
+          <span aria-disabled="true">« Previous</span>
+        @else
+          <a href="{{ $categorias->previousPageUrl() }}">« Previous</a>
+        @endif
+
+        {{-- Next --}}
+        @if ($categorias->hasMorePages())
+          <a href="{{ $categorias->nextPageUrl() }}">Next »</a>
+        @else
+          <span aria-disabled="true">Next »</span>
+        @endif
+      </div>
+      <div class="pagination-info">
+        Showing {{ $categorias->firstItem() }} to {{ $categorias->lastItem() }} of {{ $categorias->total() }} results
+      </div>
+    </div>
+  @endif
 
 </main>
 @endsection

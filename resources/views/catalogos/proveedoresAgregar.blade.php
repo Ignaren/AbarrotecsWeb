@@ -143,20 +143,6 @@
         @enderror
       </div>
 
-      <div class="form-group">
-        <label for="Email">Email</label>
-        <input
-          type="email"
-          id="Email"
-          name="Email"
-          value="{{ old('Email') }}"
-          maxlength="100"
-          required
-        >
-        @error('Email')
-          <div class="error">{{ $message }}</div>
-        @enderror
-      </div>
 
       <div class="form-group">
         <label for="Telefono">Teléfono</label>
