@@ -1,3 +1,4 @@
+
 @extends('layout')
 
 @section('content')
@@ -65,7 +66,7 @@
         <button type="button" class="btn btn-secondary mb-3" onclick="agregarProducto()">Agregar Producto</button>
 
         <div class="mb-3">
-            <label for="Total" class="form-label">Total:</label>
+            <label for="total" class="form-label">Total:</label>
             <input type="text" id="total" class="form-control" readonly>
         </div>
 

@@ -22,7 +22,7 @@ class CatalogosController extends Controller
     // PRODUCTOS
     public function productosGet(): View
     {
-        $productos = Producto::all();
+        $productos = Producto::where('Eliminado', false)->paginate(5);
 
         return view('catalogos.productosGet', [
             'productos' => $productos,
@@ -47,7 +47,7 @@ class CatalogosController extends Controller
         $request->validate([
             'nombre' => ['required', 'max:50', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s]+$/'],
             'categoria' => ['required', 'exists:categoria,PK_Id_Categoria'],
-            'descripcion' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s]+$/'],
+            'descripcion' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s,\.\/]+$/'],
             'existencia' => ['required', 'numeric', 'min:0'],
             'fecha_entrada' => ['required', 'date', "before_or_equal:$hoy"],
             'fecha_caducidad' => [
@@ -58,7 +58,7 @@ class CatalogosController extends Controller
             'precio' => ['required', 'numeric', 'min:0'],
         ], [
             'nombre.regex' => 'El nombre solo debe contener letras, números y espacios.',
-            'descripcion.regex' => 'La descripción solo debe contener letras, números y espacios.',
+            'descripcion.regex' => 'La descripción solo debe contener letras, números, espacios, comas, puntos o diagonales.',
             'fecha_entrada.before_or_equal' => 'La fecha de entrada no puede ser posterior a hoy.',
             'fecha_caducidad.after' => 'La fecha de caducidad debe ser mayor a la fecha de entrada.',
             'existencia.min' => 'La existencia debe ser mayor o igual a 0.',
@@ -94,7 +94,8 @@ class CatalogosController extends Controller
 
         $request->validate([
             'nombre' => ['required', 'string', 'max:255', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s]+$/'],
-            'descripcion' => ['nullable', 'string', 'max:1000', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s]*$/'],
+            // Permite letras, números, espacios, comas, puntos y diagonales
+            'descripcion' => ['nullable', 'string', 'max:1000', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s,\.\/]+$/'],
             'existencia' => 'required|integer|min:0',
             'fecha_entrada' => ['required', 'date', "before_or_equal:$hoy"],
             'fecha_caducidad' => 'nullable|date|after:fecha_entrada',
@@ -103,7 +104,7 @@ class CatalogosController extends Controller
             'estado' => 'required|string|in:activo,inactivo',
         ], [
             'nombre.regex' => 'El nombre no debe contener caracteres especiales.',
-            'descripcion.regex' => 'La descripción no debe contener caracteres especiales.',
+            'descripcion.regex' => 'La descripción solo debe contener letras, números, espacios, comas, puntos o diagonales.',
             'fecha_entrada.before_or_equal' => 'La fecha de entrada no puede ser posterior a hoy.',
             'fecha_caducidad.after' => 'La fecha de caducidad debe ser mayor a la fecha de entrada.',
         ]);
@@ -121,7 +122,7 @@ class CatalogosController extends Controller
 
         $producto->save();
 
-        return redirect()->route('productos.index')->with('success', 'Producto actualizado correctamente.');
+        return redirect('/catalogos/productos')->with('success', 'Producto actualizado correctamente.');
     }
 
     // Mostrar formulario de reabastecer producto
@@ -162,15 +163,16 @@ class CatalogosController extends Controller
     public function EliminarProducto($id)
     {
         $producto = Producto::findOrFail($id);
-        $producto->delete();
+        $producto->Eliminado = true;
+        $producto->save();
 
-        return redirect()->route('productos.index')->with('success', 'Producto eliminado correctamente.');
+        return redirect('/catalogos/productos')->with('success', 'Producto eliminado correctamente.');
     }
 
     // CATEGORÍAS
     public function categoriasGet(): View
     {
-        $categorias = Categoria::where('Eliminado', false)->get();
+        $categorias = Categoria::where('Eliminado', false)->paginate(5);
 
         return view('catalogos.categoriasGet', [
             'categorias' => $categorias,
@@ -196,10 +198,10 @@ class CatalogosController extends Controller
     {
         $validated = $request->validate([
             'Nombre' => ['required', 'max:50', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u'],
-            'Descripcion' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u'],
+            'Descripcion' => ['required', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s,\.\/]+$/u'],
         ], [
             'Nombre.regex' => 'El campo Nombre solo debe contener letras y espacios.',
-            'Descripcion.regex' => 'El campo Descripción solo debe contener letras y espacios.',
+            'Descripcion.regex' => 'El campo Descripción solo debe contener letras, números, espacios, comas, puntos o diagonales.',
         ]);
 
         $nombreFormateado = mb_strtoupper($validated['Nombre'], "UTF-8");
@@ -230,11 +232,12 @@ class CatalogosController extends Controller
     {
         $request->validate([
             'Nombre' => ['required', 'string', 'max:255', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u'],
-            'Descripcion' => ['nullable', 'string', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]*$/u'],
+            // Permite letras, números, espacios, comas, puntos y diagonales
+            'Descripcion' => ['nullable', 'string', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s,\.\/]*$/u'],
             'Estado' => ['required', 'string', 'in:activo,inactivo'],
         ], [
             'Nombre.regex' => 'El campo Nombre solo debe contener letras y espacios.',
-            'Descripcion.regex' => 'El campo Descripción solo debe contener letras y espacios.',
+            'Descripcion.regex' => 'El campo Descripción solo debe contener letras, números, espacios, comas, puntos o diagonales.',
         ]);
 
         $categoria = Categoria::findOrFail($id);
@@ -258,7 +261,7 @@ class CatalogosController extends Controller
     // PROVEEDORES
     public function proveedoresGet(): View
     {
-        $proveedores = Proveedor::all();
+        $proveedores = Proveedor::where('Eliminado', false)->get();
 
         return view('catalogos.proveedoresGet', [
             'proveedores' => $proveedores,
@@ -285,7 +288,6 @@ class CatalogosController extends Controller
         $validated = $request->validate([
             'Nombre' => ['required', 'max:100', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/'],
             'Direccion' => 'required|max:255',
-            'Email' => 'required|email|max:100',
             'Telefono' => 'required|max:15',
         ], [
             'Nombre.required' => 'El nombre es obligatorio.',
@@ -293,7 +295,6 @@ class CatalogosController extends Controller
             'Nombre.regex' => 'El nombre solo puede contener letras y espacios.',
             'Direccion.required' => 'La dirección es obligatoria.',
             'Direccion.max' => 'La dirección no debe exceder los 255 caracteres.',
-            'Email.required' => 'El email es obligatorio.',
             'Email.email' => 'El email debe ser una dirección válida.',
             'Email.max' => 'El email no debe exceder los 100 caracteres.',
             'Telefono.required' => 'El teléfono es obligatorio.',
@@ -325,11 +326,13 @@ class CatalogosController extends Controller
     {
         $request->validate([
             'Nombre' => ['required', 'string', 'max:255', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/'],
+            // Permite letras, números, espacios, comas, puntos y diagonales en Dirección
+            'Direccion' => ['required', 'string', 'max:255', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s,\.\/]+$/'],
             'Telefono' => 'required|string|max:20',
-            'Direccion' => ['required', 'string', 'max:255'],
             'Estado' => 'required|in:Activo,Inactivo',
         ], [
             'Nombre.regex' => 'El nombre solo puede contener letras y espacios.',
+            'Direccion.regex' => 'La dirección solo puede contener letras, números, espacios, comas, puntos o diagonales.',
         ]);
 
         $proveedor = Proveedor::findOrFail($id);
@@ -341,22 +344,23 @@ class CatalogosController extends Controller
 
         $proveedor->save();
 
-        return redirect()->route('proveedores.index')->with('success', 'Proveedor actualizado correctamente.');
+        return redirect('/catalogos/proveedores')->with('success', 'Proveedor actualizado correctamente.');
     }
 
     // Eliminar proveedor
     public function EliminarProveedor($id)
     {
         $proveedor = Proveedor::findOrFail($id);
-        $proveedor->delete();
+        $proveedor->Eliminado = true;
+        $proveedor->save();
 
-        return redirect(url('/catalogos/proveedores'))->with('success', 'Proveedor eliminado correctamente.');
+        return redirect('/catalogos/proveedores')->with('success', 'Proveedor eliminado correctamente.');
     }
 
     // CLIENTES
     public function clientesGet(): View
     {
-        $clientes = Cliente::all();
+        $clientes = Cliente::where('Eliminado', false)->get();
 
         return view('catalogos.clientesGet', [
             'clientes' => $clientes,
@@ -386,10 +390,12 @@ class CatalogosController extends Controller
             'Nombre' => ['required', 'max:50', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/'],
             'Email' => 'nullable|email|max:50',
             'RFC' => 'nullable|max:50',
+            // Permite letras, números, espacios, comas, puntos y diagonales en Dirección
+            'Direccion' => 'nullable|max:100|regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s,\.\/]*$/',
             'Telefono' => 'nullable|numeric',
-            'Direccion' => 'nullable|max:100',
         ], [
             'Nombre.regex' => 'No se permiten Numeros/Caracteres especiales',
+            'Direccion.regex' => 'La dirección solo puede contener letras, números, espacios, comas, puntos o diagonales.',
         ]);
 
         $validated['Nombre'] = mb_strtoupper($validated['Nombre'], "UTF-8");
@@ -418,11 +424,13 @@ class CatalogosController extends Controller
             'Nombre' => ['required', 'string', 'max:255', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/'],
             'Email' => 'required|email|max:255',
             'RFC' => 'required|string|max:13',
+            // Permite letras, números, espacios, comas, puntos y diagonales en Dirección
+            'Direccion' => 'required|string|max:255|regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s,\.\/]*$/',
             'Telefono' => 'required|string|max:15',
-            'Direccion' => 'required|string|max:255',
             'Estado' => 'required|in:Activo,Inactivo',
         ], [
             'Nombre.regex' => 'No se permiten Numeros/Caracteres especiales',
+            'Direccion.regex' => 'La dirección solo puede contener letras, números, espacios, comas, puntos o diagonales.',
         ]);
 
         $cliente = Cliente::findOrFail($id);
@@ -443,12 +451,13 @@ class CatalogosController extends Controller
     public function eliminarCliente($id)
     {
         $cliente = Cliente::findOrFail($id);
-        $cliente->delete();
+        $cliente->Eliminado = true;
+        $cliente->save();
 
-        return redirect('/catalogos/clientes')->with('success', 'Cliente eliminado exitosamente.');
+        return redirect('/catalogos/clientes')->with('success', 'Cliente eliminado correctamente.');
     }
 
-    // VENTAS
+    //v
     public function ventasGet(): View
     {
         $ventas = Venta::all();
@@ -460,53 +469,6 @@ class CatalogosController extends Controller
                 'Ventas' => url('/catalogos/ventas'),
             ],
         ]);
-    }
-
-    public function ventasAgregarGet(): View
-    {
-        $clientes = Cliente::all();
-        $productos = Producto::all();
-
-        return view('catalogos.ventasAgregar', compact('clientes', 'productos'));
-    }
-
-    public function ventasAgregarPost(Request $request)
-    {
-        $request->validate([
-            'cliente' => 'required|exists:cliente,PK_Id_Cliente',
-            'productos' => 'required|array',
-            'productos.*.producto_id' => 'required|exists:producto,PK_Id_Producto',
-            'productos.*.cantidad' => 'required|integer|min:1',
-        ]);
-
-        // Validar stock para cada producto
-        foreach ($request->productos as $item) {
-            $producto = Producto::findOrFail($item['producto_id']);
-            if ($producto->Existencia < $item['cantidad']) {
-                return back()->withErrors(["stock" => "No hay suficiente stock para el producto: " . $producto->Nombre]);
-            }
-        }
-
-        // Crear venta
-        $venta = Venta::create([
-            'FK_Id_Cliente' => $request->cliente,
-            'Fecha' => now(),
-        ]);
-
-        // Crear detalles y descontar stock
-        foreach ($request->productos as $item) {
-            DetalleVenta::create([
-                'FK_Id_Venta' => $venta->PK_Id_Venta,
-                'FK_Id_Producto' => $item['producto_id'],
-                'Cantidad' => $item['cantidad'],
-            ]);
-
-            $producto = Producto::findOrFail($item['producto_id']);
-            $producto->Existencia -= $item['cantidad'];
-            $producto->save();
-        }
-
-        return redirect('/catalogos/ventas')->with('success', 'Venta registrada correctamente.');
     }
 
     public function detalleVenta($id)
