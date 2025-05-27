@@ -44,11 +44,9 @@
         <a href="{{ url('/catalogos/proveedores') }}">Proveedores</a>
         <a href="{{ url('/catalogos/clientes') }}">Clientes</a>
         <a href="{{ url('/catalogos/ventas') }}">Ventas</a>
-<<<<<<< HEAD
+
         <a href="{{ url('/reportes') }}">Reportes</a>
-=======
         <a href="{{ url('/catalogos/reportes') }}">Reportes</a>
->>>>>>> 1506bd1652317c221d18bca64d923b18487782f0
       </div>
     </nav>
 

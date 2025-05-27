@@ -33,17 +33,10 @@ class CatalogosController extends Controller
         ]);
     }
 
-<<<<<<< HEAD
     public function productosAgregarGet(): View
     {
-        $categorias = Categoria::where('Eliminado', false)->get();
-=======
- public function productosAgregarGet()
-{
-    // Solo categorías activas
-    $categorias = \App\Models\Categoria::where('Estado', 'activo')->get();
->>>>>>> 1506bd1652317c221d18bca64d923b18487782f0
-
+        // Solo categorías activas
+        $categorias = Categoria::where('Estado', 'activo')->where('Eliminado', false)->get();
         return view('catalogos.productosAgregar', compact('categorias'));
     }
 
@@ -89,7 +82,7 @@ class CatalogosController extends Controller
     public function EditarProducto($id)
     {
         $producto = Producto::findOrFail($id);
-        $categorias = Categoria::all();
+        $categorias = Categoria::where('Eliminado', false)->get();
 
         return view('editores.producto', compact('producto', 'categorias'));
     }
@@ -250,7 +243,7 @@ class CatalogosController extends Controller
         $categoria = Categoria::findOrFail($id);
         $categoria->Nombre = mb_strtoupper($request->Nombre, "UTF-8");
         $categoria->Descripcion = mb_strtoupper($request->Descripcion, "UTF-8");
-        $categoria->estado = $request->Estado;
+        $categoria->Estado = $request->Estado;
         $categoria->save();
 
         return redirect('/catalogos/categorias')->with('success', 'Categoría actualizada correctamente.');

@@ -77,13 +77,13 @@ Route::put('/catalogos/clientes/editar/{id}', [CatalogosController::class, 'actu
 // Eliminar cliente
 Route::get('/catalogos/clientes/eliminar/{id}', [CatalogosController::class, 'eliminarCliente'])->name('clientes.eliminar');
 
-<<<<<<< HEAD
+
 //rutas para ver la vista de reportes
 Route::get('/reportes', [CatalogosController::class, 'reportes'])->name('reportes.index');
 // Rutas para generar reportes
 Route::get('/reportes/venta_Mensual', [CatalogosController::class, 'ventaMensual']);
 Route::get('/reportes/venta_Diaria', [CatalogosController::class, 'ventaDiaria']);
-=======
+
 // Rutas de reportes
 Route::get('/catalogos/reportes', function () {
     return view('catalogos.reportesGet');
@@ -167,6 +167,3 @@ Route::get('/catalogos/reportes/productos-mas-vendidos', function () {
 
     return view('reportes.productos-mas-vendidos', compact('productos'));
 })->name('reportes.productos_mas_vendidos');
-
-
->>>>>>> 1506bd1652317c221d18bca64d923b18487782f0
