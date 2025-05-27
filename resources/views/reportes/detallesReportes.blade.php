@@ -30,7 +30,7 @@
     thead tr {
       background-color: #6A4FBC;
       color: white;
-      text-align: left;
+      text-align: center;
     }
 
     thead th {
@@ -52,6 +52,7 @@
       background: #f9f9fb;
       box-shadow: 0 2px 7px rgba(106, 79, 188, 0.1);
       transition: background-color 0.3s ease, transform 0.2s ease;
+      text-align: center;
     }
 
     tbody tr:hover {
@@ -66,29 +67,21 @@
       transition: border-color 0.3s ease;
       white-space: nowrap;
       vertical-align: middle;
+      text-align: center;
     }
 
     tbody tr:hover td {
       border-left-color: #6A4FBC;
     }
 
-    .btn-agregar {
-      background-color: #6A4FBC;
-      color: white;
-      font-weight: 700;
-      padding: 0.35rem 0.9rem;
-      border-radius: 12px;
-      box-shadow: 0 3px 8px rgba(106, 79, 188, 0.6);
-      text-decoration: none;
-      font-size: 0.85rem;
-      transition: background-color 0.3s ease;
-      white-space: nowrap;
+    tfoot td {
+      padding: 18px 25px;
+      font-weight: bold;
+      background-color: #eee;
+      text-align: center;
     }
 
-    .btn-agregar:hover {
-      background-color: #4B367C;
-    }
-
+    /* Scrollbar */
     .table-wrapper::-webkit-scrollbar {
       height: 8px;
     }
@@ -97,18 +90,6 @@
       background: #6A4FBC;
       border-radius: 10px;
     }
-
-    /* Estilo para el enlace Ver detalles */
-    .detalle-link {
-      color: #6A4FBC;
-      font-weight: 700;
-      text-decoration: none;
-      transition: color 0.3s ease;
-    }
-    .detalle-link:hover {
-      color: #4B367C;
-      text-decoration: underline;
-    }
   </style>
 @endsection
 
@@ -116,6 +97,13 @@
 <main class="content fade-in">
 
   {{-- Breadcrumbs --}}
+  @php
+    $breadcrumbs = [
+      'Reportes' => url('/catalogos/reportes'),
+      'Ventas Diarias' => url('/catalogos/reportes/ventas-diaria'),
+      'Detalle de la Venta' => ''
+    ];
+  @endphp
   <nav aria-label="breadcrumb" style="margin-bottom: 1rem;">
     <ol style="list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; font-size: 0.9rem; color: #4B367C;">
       @foreach ($breadcrumbs as $label => $link)
@@ -131,49 +119,57 @@
     </ol>
   </nav>
 
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
-    <h1 style="color: #4B367C; font-weight: 700; margin: 0;">Ventas</h1>
-
-    <a class="btn-agregar" href="/ventas/crear">+ Agregar</a>
-
+  <div style="margin-bottom: 1.2rem;">
+    <h1 style="color: #4B367C; font-weight: 700; margin: 0; text-align: center;">
+      Detalle de la Venta
+    </h1>
+    <p style="text-align: center; margin-top: 0.5rem; color: #6A4FBC;">
+      Cliente:
+      <strong>
+        @if($detalles->count() > 0 && $detalles->first()->venta && $detalles->first()->venta->cliente)
+          {{ $detalles->first()->venta->cliente->Nombre }}
+        @else
+          Desconocido
+        @endif
+      </strong>
+    </p>
   </div>
-
-  @if(session('success'))
-    <div style="background-color: #d4edda; color: #155724; padding: 1rem; border-radius: 6px; border: 1px solid #c3e6cb; margin-bottom: 1.5rem;">
-      {{ session('success') }}
-    </div>
-  @endif
 
   <div class="table-wrapper">
     <table>
       <thead>
         <tr>
-          <th>ID Venta</th>
-          <th>Fecha</th>
-          <th>Total</th>
-          <th>ID Cliente</th>
-          <th>Acciones</th>
+          <th>Producto</th>
+          <th>Precio Unitario</th>
+          <th>Cantidad</th>
+          <th>Subtotal</th>
         </tr>
       </thead>
       <tbody>
-        @forelse ($ventas as $venta)
-        <tr>
-          <td>{{ $venta->PK_Id_Venta }}</td>
-          <td>{{ $venta->Fecha }}</td>
-          <td>{{ number_format($venta->Total, 2) }}</td>
-          <td>{{ $venta->FK_Id_Cliente }}</td>
-          <td>
-            <a href="{{ url('/detalleVenta/' . $venta->PK_Id_Venta) }}" class="detalle-link">
-              Ver detalles
-            </a>
-          </td>
-        </tr>
+        @php $total = 0; @endphp
+        @forelse ($detalles as $detalle)
+          @php
+            $subtotal = $detalle->Cantidad * $detalle->Precio_Unitario;
+            $total += $subtotal;
+          @endphp
+          <tr>
+            <td>{{ optional($detalle->producto)->Nombre ?? 'Producto no encontrado' }}</td>
+            <td>${{ number_format($detalle->Precio_Unitario, 2) }}</td>
+            <td>{{ $detalle->Cantidad }}</td>
+            <td>${{ number_format($subtotal, 2) }}</td>
+          </tr>
         @empty
-        <tr>
-          <td colspan="5" style="text-align:center; padding: 20px 30px;">No hay ventas registradas.</td>
-        </tr>
+          <tr>
+            <td colspan="4" style="text-align:center; padding: 20px 30px;">No hay detalles para esta venta.</td>
+          </tr>
         @endforelse
       </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3" style="text-align: right;">Total:</td>
+          <td>${{ number_format($total, 2) }}</td>
+        </tr>
+      </tfoot>
     </table>
   </div>
 

@@ -33,9 +33,16 @@ class CatalogosController extends Controller
         ]);
     }
 
+<<<<<<< HEAD
     public function productosAgregarGet(): View
     {
         $categorias = Categoria::where('Eliminado', false)->get();
+=======
+ public function productosAgregarGet()
+{
+    // Solo categorías activas
+    $categorias = \App\Models\Categoria::where('Estado', 'activo')->get();
+>>>>>>> 1506bd1652317c221d18bca64d923b18487782f0
 
         return view('catalogos.productosAgregar', compact('categorias'));
     }

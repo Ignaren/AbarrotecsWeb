@@ -98,16 +98,23 @@
       border-radius: 10px;
     }
 
-    /* Estilo para el enlace Ver detalles */
+    /* Estilo para el enlace Detalles */
     .detalle-link {
       color: #6A4FBC;
       font-weight: 700;
       text-decoration: none;
       transition: color 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
     }
     .detalle-link:hover {
       color: #4B367C;
       text-decoration: underline;
+    }
+    .precio {
+      font-weight: 700;
+      color: #4B367C;
     }
   </style>
 @endsection
@@ -115,44 +122,25 @@
 @section('content')
 <main class="content fade-in">
 
-  {{-- Breadcrumbs --}}
-  <nav aria-label="breadcrumb" style="margin-bottom: 1rem;">
-    <ol style="list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; font-size: 0.9rem; color: #4B367C;">
-      @foreach ($breadcrumbs as $label => $link)
-        @if ($loop->last)
-          <li style="font-weight: 700;">{{ $label }}</li>
-        @else
-          <li>
-            <a href="{{ $link }}" style="color: #6A4FBC; text-decoration: none; font-weight: 600;">{{ $label }}</a>
-            <span style="margin: 0 0.4rem;">/</span>
-          </li>
-        @endif
-      @endforeach
-    </ol>
-  </nav>
+    <h1 style="color: #4B367C; font-weight: 700; margin-bottom: 2rem;">Ventas Diarias</h1>
 
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
-    <h1 style="color: #4B367C; font-weight: 700; margin: 0;">Ventas</h1>
 
-    <a class="btn-agregar" href="/ventas/crear">+ Agregar</a>
-
+    <a href="{{ url('/catalogos/reportes') }}" class="btn-agregar" style="background-color: #6A4FBC; color: white; font-weight: 700; padding: 0.35rem 0.9rem; border-radius: 12px; box-shadow: 0 3px 8px rgba(106, 79, 188, 0.6); text-decoration: none; font-size: 0.85rem; transition: background-color 0.3s ease; white-space: nowrap; margin-bottom: 1.5rem; display: inline-block;" onmouseover="this.style.backgroundColor='#4B367C'" onmouseout="this.style.backgroundColor='#6A4FBC'">
+      ← Regresar
+    </a>
   </div>
-
-  @if(session('success'))
-    <div style="background-color: #d4edda; color: #155724; padding: 1rem; border-radius: 6px; border: 1px solid #c3e6cb; margin-bottom: 1.5rem;">
-      {{ session('success') }}
-    </div>
-  @endif
 
   <div class="table-wrapper">
     <table>
       <thead>
         <tr>
-          <th>ID Venta</th>
+          <th>ID venta</th>
           <th>Fecha</th>
           <th>Total</th>
           <th>ID Cliente</th>
-          <th>Acciones</th>
+          <th>Nombre Cliente</th>
+          <th>Más...</th>
         </tr>
       </thead>
       <tbody>
@@ -160,17 +148,23 @@
         <tr>
           <td>{{ $venta->PK_Id_Venta }}</td>
           <td>{{ $venta->Fecha }}</td>
-          <td>{{ number_format($venta->Total, 2) }}</td>
+          <td class="precio">${{ number_format($venta->Total, 2) }}</td>
           <td>{{ $venta->FK_Id_Cliente }}</td>
+          <td>{{ $venta->cliente_nombre ?? '---' }}</td>
           <td>
-            <a href="{{ url('/detalleVenta/' . $venta->PK_Id_Venta) }}" class="detalle-link">
-              Ver detalles
+            <a href="{{ url('/reportes/detallesReportes/'.$venta->PK_Id_Venta) }}" class="detalle-link">
+              Detalles
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24">
+                <rect width="18" height="20" x="3" y="2" rx="4" fill="#f5b041" stroke="#b9770e" stroke-width="1.5"/>
+                <rect width="10" height="2" x="7" y="4" rx="1" fill="#fff"/>
+                <rect width="14" height="12" x="5" y="8" rx="2" fill="#fff" stroke="#b9770e" stroke-width="1"/>
+              </svg>
             </a>
           </td>
         </tr>
         @empty
         <tr>
-          <td colspan="5" style="text-align:center; padding: 20px 30px;">No hay ventas registradas.</td>
+          <td colspan="6" style="text-align:center; padding: 20px 30px;">No hay ventas registradas.</td>
         </tr>
         @endforelse
       </tbody>

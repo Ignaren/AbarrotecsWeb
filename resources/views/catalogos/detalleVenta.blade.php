@@ -97,6 +97,12 @@
 <main class="content fade-in">
 
   {{-- Breadcrumbs --}}
+  @php
+    $breadcrumbs = [
+      'Ventas' => url('/catalogos/ventas'),
+      'Detalle de la Venta' => ''
+    ];
+  @endphp
   <nav aria-label="breadcrumb" style="margin-bottom: 1rem;">
     <ol style="list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; font-size: 0.9rem; color: #4B367C;">
       @foreach ($breadcrumbs as $label => $link)

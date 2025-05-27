@@ -13,8 +13,15 @@ class VentasController extends Controller
 {
     public function create()
     {
+<<<<<<< HEAD
         // Solo productos activos y no eliminados
         $productos = Producto::where('Estado', 'activo')->where('Eliminado', false)->get();
+=======
+        // Traemos solo productos activos y con existencia mayor a 0
+        $productos = Producto::where('Existencia', '>', 0)
+                            ->where('estado', 'Activo')
+                            ->get();
+>>>>>>> 1506bd1652317c221d18bca64d923b18487782f0
 
         // Solo clientes activos y no eliminados
         $clientes = Cliente::where('Estado', 'Activo')->where('Eliminado', false)->get();
