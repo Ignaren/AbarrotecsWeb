@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CatalogosController;
 use App\Http\Controllers\VentasController;
+use App\Models\Venta; // Asegúrate de importar tu modelo Venta
 
 // Ruta de inicio home (NO TOCAR!!!)
 Route::get('/', [CatalogosController::class, 'home'])->name('inicio');
@@ -80,7 +81,17 @@ Route::get('/catalogos/reportes', function () {
     return view('catalogos.reportesGet');
 })->name('reportes.index');
 
-Route::get('/catalogos/reportes/ventas-diaria', [CatalogosController::class, 'reporteVentaDiaria'])->name('reportes.venta_diaria');
+Route::get('/catalogos/reportes/ventas-diaria', function () {
+   
+    $hoy = date('Y-m-d');
+    $ventas = \App\Models\Venta::whereDate('Fecha', $hoy)->get();
+  
+    foreach ($ventas as $venta) {
+        $venta->cliente_nombre = $venta->cliente->Nombre ?? '---';
+    }
+    return view('reportes.ventas-diaria', compact('ventas'));
+})->name('reportes.venta_diaria');
+
 Route::get('/catalogos/reportes/ventas-periodo', [CatalogosController::class, 'reporteVentasPeriodo'])->name('reportes.ventas_periodo');
 Route::get('/catalogos/reportes/productos-mas-vendidos', [CatalogosController::class, 'reporteProductosMasVendidos'])->name('reportes.productos_mas_vendidos');
 
