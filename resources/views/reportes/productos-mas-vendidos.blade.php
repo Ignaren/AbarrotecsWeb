@@ -73,8 +73,8 @@
           <th>Nombre del producto</th>
           <th>Existencia</th>
           <th>Precio</th>
-          <th>ID Proveedor</th>
-          <th>Nombre Proveedor</th>
+          {{-- <th>ID Proveedor</th> --}}
+          {{-- <th>Nombre Proveedor</th> --}}
         </tr>
       </thead>
       <tbody>
@@ -84,12 +84,12 @@
           <td>{{ $producto->Nombre }}</td>
           <td>{{ $producto->Existencia }}</td>
           <td class="precio">${{ number_format($producto->Precio, 2) }}</td>
-          <td>{{ $producto->FK_Id_Proveedor }}</td>
-          <td>{{ $producto->proveedor->Nombre ?? '---' }}</td>
+          {{-- <td>{{ $producto->FK_Id_Proveedor }}</td> --}}
+          {{-- <td>{{ $producto->proveedor->Nombre ?? '---' }}</td> --}}
         </tr>
         @empty
         <tr>
-          <td colspan="6" style="text-align:center; padding: 20px 30px;">No hay productos registrados en este periodo.</td>
+          <td colspan="4" style="text-align:center; padding: 20px 30px;">No hay productos registrados en este periodo.</td>
         </tr>
         @endforelse
       </tbody>
