@@ -28,4 +28,10 @@ class Producto extends Model
     {
         return $this->hasMany(DetalleVenta::class, 'FK_Id_Producto', 'PK_Id_Producto');
     }
+    
+    public function ventas()
+    {
+        // Relación con DetalleVenta para sumar la cantidad vendida
+        return $this->hasMany(DetalleVenta::class, 'FK_Id_Producto', 'PK_Id_Producto');
+    }
 }

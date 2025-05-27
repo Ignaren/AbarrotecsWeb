@@ -32,9 +32,10 @@ class CatalogosController extends Controller
         ]);
     }
 
- public function productosAgregarGet(): View
+ public function productosAgregarGet()
 {
-    $categorias = Categoria::all();
+    // Solo categorías activas
+    $categorias = \App\Models\Categoria::where('Estado', 'activo')->get();
 
     return view('catalogos.productosAgregar', compact('categorias'));
 }

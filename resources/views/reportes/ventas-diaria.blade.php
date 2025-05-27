@@ -122,9 +122,11 @@
 @section('content')
 <main class="content fade-in">
 
+    <h1 style="color: #4B367C; font-weight: 700; margin-bottom: 2rem;">Ventas Diarias</h1>
+
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
-    <h1 style="color: #4B367C; font-weight: 700; margin: 0;">Ventas Diarias</h1>
-    <a href="{{ url('/catalogos/reportes') }}" class="btn-agregar" style="background-color: #6A4FBC; color: white; font-weight: 700; padding: 0.35rem 0.9rem; border-radius: 12px; box-shadow: 0 3px 8px rgba(106, 79, 188, 0.6); text-decoration: none; font-size: 0.85rem; transition: background-color 0.3s ease; white-space: nowrap;" onmouseover="this.style.backgroundColor='#4B367C'" onmouseout="this.style.backgroundColor='#6A4FBC'">
+
+    <a href="{{ url('/catalogos/reportes') }}" class="btn-agregar" style="background-color: #6A4FBC; color: white; font-weight: 700; padding: 0.35rem 0.9rem; border-radius: 12px; box-shadow: 0 3px 8px rgba(106, 79, 188, 0.6); text-decoration: none; font-size: 0.85rem; transition: background-color 0.3s ease; white-space: nowrap; margin-bottom: 1.5rem; display: inline-block;" onmouseover="this.style.backgroundColor='#4B367C'" onmouseout="this.style.backgroundColor='#6A4FBC'">
       ← Regresar
     </a>
   </div>

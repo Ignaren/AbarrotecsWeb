@@ -12,8 +12,10 @@ class VentasController extends Controller
 {
     public function create()
     {
-        // Traemos solo productos activos
-        $productos = Producto::where('estado', 'Activo')->get();
+        // Traemos solo productos activos y con existencia mayor a 0
+        $productos = Producto::where('Existencia', '>', 0)
+                            ->where('estado', 'Activo')
+                            ->get();
 
         // Traemos solo clientes activos (tabla 'cliente' desde el modelo)
         $clientes = Cliente::where('estado', 'Activo')->get();

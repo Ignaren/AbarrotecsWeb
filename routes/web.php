@@ -81,6 +81,19 @@ Route::get('/catalogos/reportes', function () {
     return view('catalogos.reportesGet');
 })->name('reportes.index');
 
+Route::get('/detalleVenta/{id}', function($id) {
+    // Obtén los detalles de la venta por ID
+    $detalles = \App\Models\DetalleVenta::where('FK_Id_Venta', $id)->with(['producto', 'venta.cliente'])->get();
+    // Puedes agregar breadcrumbs si lo deseas
+    return view('catalogos.detalleVenta', compact('detalles', 'id'));
+})->name('detalleVenta');
+
+Route::get('/reportes/detallesReportes/{id}', function($id) {
+    // Obtén los detalles de la venta por ID
+    $detalles = \App\Models\DetalleVenta::where('FK_Id_Venta', $id)->with(['producto', 'venta.cliente'])->get();
+    return view('reportes.detallesReportes', compact('detalles', 'id'));
+})->name('reportes.detalles');
+
 Route::get('/catalogos/reportes/ventas-diaria', function () {
    
     $hoy = date('Y-m-d');
@@ -92,7 +105,59 @@ Route::get('/catalogos/reportes/ventas-diaria', function () {
     return view('reportes.ventas-diaria', compact('ventas'));
 })->name('reportes.venta_diaria');
 
-Route::get('/catalogos/reportes/ventas-periodo', [CatalogosController::class, 'reporteVentasPeriodo'])->name('reportes.ventas_periodo');
-Route::get('/catalogos/reportes/productos-mas-vendidos', [CatalogosController::class, 'reporteProductosMasVendidos'])->name('reportes.productos_mas_vendidos');
+Route::get('/catalogos/reportes/ventas-periodo', function (\Illuminate\Http\Request $request) {
+    $tipo = $request->input('tipo', 'semana');
+    $ventas = \App\Models\Venta::query();
+
+    if ($tipo === 'semana' && $request->filled(['semana', 'mes_semana', 'anio_semana'])) {
+        $semana = (int)$request->input('semana');
+        $mes = (int)$request->input('mes_semana');
+        $anio = (int)$request->input('anio_semana');
+        // Primer día del mes
+        $fechaInicioMes = \Carbon\Carbon::create($anio, $mes, 1);
+        // Calcular el rango de la semana seleccionada dentro del mes
+        $fechaInicio = $fechaInicioMes->copy()->addWeeks($semana-1)->startOfWeek();
+        $fechaFin = $fechaInicio->copy()->endOfWeek();
+        // Limitar el rango al mes seleccionado
+        if ($fechaInicio < $fechaInicioMes) $fechaInicio = $fechaInicioMes;
+        $fechaFinMes = $fechaInicioMes->copy()->endOfMonth();
+        if ($fechaFin > $fechaFinMes) $fechaFin = $fechaFinMes;
+        $ventas = $ventas->whereBetween('Fecha', [$fechaInicio->toDateString(), $fechaFin->toDateString()]);
+    } elseif ($tipo === 'mes' && $request->filled(['mes', 'anio_mes'])) {
+        $mes = (int)$request->input('mes');
+        $anio = (int)$request->input('anio_mes');
+        $fechaInicio = \Carbon\Carbon::create($anio, $mes, 1)->startOfMonth();
+        $fechaFin = \Carbon\Carbon::create($anio, $mes, 1)->endOfMonth();
+        $ventas = $ventas->whereBetween('Fecha', [$fechaInicio->toDateString(), $fechaFin->toDateString()]);
+    } elseif ($tipo === 'anio' && $request->filled('anio')) {
+        $anio = (int)$request->input('anio');
+        $fechaInicio = \Carbon\Carbon::create($anio, 1, 1)->startOfYear();
+        $fechaFin = \Carbon\Carbon::create($anio, 1, 1)->endOfYear();
+        $ventas = $ventas->whereBetween('Fecha', [$fechaInicio->toDateString(), $fechaFin->toDateString()]);
+    } else {
+        // Por defecto, muestra la semana actual del mes actual
+        $fechaInicio = \Carbon\Carbon::now()->startOfWeek();
+        $fechaFin = \Carbon\Carbon::now()->endOfWeek();
+        $ventas = $ventas->whereBetween('Fecha', [$fechaInicio->toDateString(), $fechaFin->toDateString()]);
+    }
+
+    $ventas = $ventas->get();
+
+    foreach ($ventas as $venta) {
+        $venta->cliente_nombre = $venta->cliente->Nombre ?? '---';
+    }
+
+    return view('reportes.ventas-periodo', compact('ventas'));
+})->name('reportes.ventas_periodo');
+Route::get('/catalogos/reportes/productos-mas-vendidos', function () {
+  
+    $productos = \App\Models\Producto::select('producto.*')
+        ->withSum('ventas as cantidad_vendida', 'Cantidad')
+        ->orderByDesc('cantidad_vendida')
+        ->limit(20)
+        ->get();
+
+    return view('reportes.productos-mas-vendidos', compact('productos'));
+})->name('reportes.productos_mas_vendidos');
 
 
