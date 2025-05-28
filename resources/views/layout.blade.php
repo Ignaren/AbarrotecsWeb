@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>@yield('title', 'AbarroTecs')</title>
-  <link rel="stylesheet" href="{{ asset('css/style.css') }}" />
+  <link rel="stylesheet" href="{{ secure_asset('css/style.css') }}" />
   <style>
     .logo a {
       transition: transform 0.3s ease;
@@ -33,7 +33,7 @@
     <nav class="navbar">
       <div class="logo" style="width: 180px; cursor: pointer;">
         <a href="{{ url('/') }}">
-          <img src="{{ asset('images/logo.png') }}" alt="Logo AbarroTecs" style="height: 40px; display: block;" />
+          <img src="{{ secure_asset('images/logo.png') }}" alt="Logo AbarroTecs" style="height: 40px; display: block;" />
           <span class="logo-text">ABARROTECS</span>
         </a>
       </div>
@@ -57,6 +57,3 @@
   </div>
 </body>
 </html>
-
-
-
