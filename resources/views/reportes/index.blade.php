@@ -44,6 +44,15 @@
                 <span class="tooltip-below" style="font-size: 0.60em; color: #888; margin-left: 10px;">Reporte de productos más vendidos</span>
             </a>
         </div>
+
+        <div class="btn-large-group fade-in">
+            <a href="{{ url('/reportes/clientes_frecuentes') }}" class="btn-large" style="text-align: left; white-space: nowrap;">
+                Clientes frecuentes
+                <span class="tooltip-below" style="font-size: 0.60em; color: #888; margin-left: 10px;">
+                    Clientes con más ventas y el total vendido
+                </span>
+            </a>
+        </div>
     </div>
 
 </main>

@@ -563,4 +563,30 @@ class CatalogosController extends Controller
             'breadcrumbs' => $breadcrumbs,
         ]);
     }
+
+    public function clientesFrecuentes()
+    {
+        $clientes = \DB::table('ventas')
+            ->join('cliente', 'ventas.FK_Id_Cliente', '=', 'cliente.PK_Id_Cliente')
+            ->select(
+                'cliente.Nombre',
+                \DB::raw('COUNT(ventas.PK_Id_Venta) as total_ventas'),
+                \DB::raw('SUM(ventas.Total) as total_comprado')
+            )
+            ->groupBy('cliente.PK_Id_Cliente', 'cliente.Nombre')
+            ->orderByDesc('total_ventas')
+            ->limit(10)
+            ->get();
+
+        $breadcrumbs = [
+            'Inicio' => url('/'),
+            'Reportes' => url('/reportes'),
+            'Clientes frecuentes' => url('/reportes/clientes_frecuentes')
+        ];
+
+        return view('reportes.clientes_frecuentes', [
+            'clientes' => $clientes,
+            'breadcrumbs' => $breadcrumbs,
+        ]);
+    }
 }

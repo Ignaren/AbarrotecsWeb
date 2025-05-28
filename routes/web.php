@@ -25,7 +25,7 @@ Route::get('/catalogos/productos', [CatalogosController::class, 'productosGet'])
 Route::get('/catalogos/proveedores', [CatalogosController::class, 'proveedoresGet'])->name('proveedores.index');
 Route::get('/catalogos/clientes', [CatalogosController::class, 'clientesGet'])->name('clientes.index');
 Route::get('/catalogos/ventas', [CatalogosController::class, 'ventasGet'])->name('ventas.index');
-Route::get('/catalogos/ventas/detalle/{id}', [CatalogosController::class, 'detalleVenta'])->name('ventas.detalle');
+Route::get('/detalleVenta/{id}', [CatalogosController::class, 'detalleVenta'])->name('detalleVenta');
 
 // Formularios (captura de datos)
 // Categorías
@@ -83,3 +83,4 @@ Route::get('/reportes', [CatalogosController::class, 'reportes'])->name('reporte
 Route::get('/reportes/venta_diaria', [CatalogosController::class, 'ventaDiaria'])->name('reportes.venta_diaria');
 Route::get('/reportes/ventas_periodo', [CatalogosController::class, 'ventasPeriodo'])->name('reportes.ventas_periodo');
 Route::get('/reportes/productos_mas_vendidos', [CatalogosController::class, 'productosMasVendidos'])->name('reportes.productos_mas_vendidos');
+Route::get('/reportes/clientes_frecuentes', [CatalogosController::class, 'clientesFrecuentes'])->name('reportes.clientes_frecuentes');
