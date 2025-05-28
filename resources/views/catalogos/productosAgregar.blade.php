@@ -161,7 +161,7 @@
 
       <div class="form-group">
         <label for="categoria">Categoría</label>
-        <select name="FK_Id_Categoria" id="FK_Id_Categoria" required>
+        <select name="categoria" id="FK_Id_Categoria" required>
           <option value="">Seleccionar categoría</option>
           @foreach ($categorias as $categoria)
             <option value="{{ $categoria->PK_Id_Categoria }}" {{ old('categoria') == $categoria->PK_Id_Categoria ? 'selected' : '' }}>

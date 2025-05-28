@@ -509,9 +509,58 @@ class CatalogosController extends Controller
         $fecha = $request->input('fecha', date('Y-m-d'));
         $ventas = Venta::whereDate('Fecha', $fecha)->with('cliente')->get();
 
+        $breadcrumbs = [
+            'Inicio' => url('/'),
+            'Reportes' => url('/reportes'),
+            'Venta diaria' => url('/reportes/venta_diaria')
+        ];
+
         return view('reportes.venta_diaria', [
             'fecha' => $fecha,
             'ventas' => $ventas,
+            'breadcrumbs' => $breadcrumbs,
+        ]);
+    }
+
+    public function ventasPeriodo(Request $request)
+    {
+        $fecha_inicio = $request->input('fecha_inicio', date('Y-m-01'));
+        $fecha_fin = $request->input('fecha_fin', date('Y-m-d'));
+        $ventas = Venta::whereBetween('Fecha', [$fecha_inicio, $fecha_fin])->with('cliente')->get();
+
+        $breadcrumbs = [
+            'Inicio' => url('/'),
+            'Reportes' => url('/reportes'),
+            'Venta por periodo' => url('/reportes/ventas_periodo')
+        ];
+
+        return view('reportes.ventas_periodo', [
+            'fecha_inicio' => $fecha_inicio,
+            'fecha_fin' => $fecha_fin,
+            'ventas' => $ventas,
+            'breadcrumbs' => $breadcrumbs,
+        ]);
+    }
+
+    public function productosMasVendidos()
+    {
+        $productos = \DB::table('detalle_venta')
+            ->join('producto', 'detalle_venta.FK_Id_Producto', '=', 'producto.PK_Id_Producto')
+            ->select('producto.Nombre', \DB::raw('SUM(detalle_venta.Cantidad) as total_vendidos'))
+            ->groupBy('producto.PK_Id_Producto', 'producto.Nombre')
+            ->orderByDesc('total_vendidos')
+            ->limit(10)
+            ->get();
+
+        $breadcrumbs = [
+            'Inicio' => url('/'),
+            'Reportes' => url('/reportes'),
+            'Productos más vendidos' => url('/reportes/productos_mas_vendidos')
+        ];
+
+        return view('reportes.productos_mas_vendidos', [
+            'productos' => $productos,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 }

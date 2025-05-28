@@ -1,9 +1,10 @@
 @extends('layout')
 
-@section('title', 'Ventas Diarias')
+@section('title', 'Ventas por Periodo')
 
 @section('content')
 <main class="content fade-in" style="max-width: 700px; margin: 0 auto;">
+    {{-- Breadcrumbs dinámicos --}}
     @if(isset($breadcrumbs) && count($breadcrumbs))
         <nav style="margin-top: 20px; margin-bottom: 10px; font-size: 1.05em; color: #888;">
             @foreach($breadcrumbs as $label => $url)
@@ -17,10 +18,12 @@
         </nav>
     @endif
 
-    <h2 class="mb-4" style="font-weight: bold; color: #2c3e50;">Ventas del día</h2>
-    <form method="GET" action="{{ url('/reportes/venta_diaria') }}" class="mb-4" style="display: flex; align-items: center; gap: 1rem;">
-        <label style="margin-bottom: 0;">Selecciona una fecha:</label>
-        <input type="date" name="fecha" value="{{ $fecha }}" style="padding: 0.3rem 0.7rem;">
+    <h2 class="mb-4" style="font-weight: bold; color: #2c3e50;">Ventas por periodo</h2>
+    <form method="GET" action="{{ url('/reportes/ventas_periodo') }}" class="mb-4" style="display: flex; align-items: center; gap: 1rem;">
+        <label style="margin-bottom: 0;">De:</label>
+        <input type="date" name="fecha_inicio" value="{{ $fecha_inicio }}" style="padding: 0.3rem 0.7rem;">
+        <label style="margin-bottom: 0;">a</label>
+        <input type="date" name="fecha_fin" value="{{ $fecha_fin }}" style="padding: 0.3rem 0.7rem;">
         <button type="submit" class="btn btn-primary btn-sm" style="padding: 0.3rem 1.2rem;">Ver ventas</button>
     </form>
 
@@ -46,7 +49,7 @@
             </tbody>
         </table>
     @else
-        <p style="color: #888;">No hay ventas para esta fecha.</p>
+        <p style="color: #888;">No hay ventas para este periodo.</p>
     @endif
 </main>
 @endsection
